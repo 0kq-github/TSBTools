@@ -33,12 +33,28 @@ class tsbAPI:
     """
     return self.releases if self.releases else self.fetch_release()
 
+class mojangAPI:
+  def __init__(self):
+    self.manifest_url = "https://piston-meta.mojang.com/mc/game/version_manifest_v2.json"
+
+  def fetch_release(self):
+    resp = requests.get(self.manifest_url)
+    r = resp.json()
+
+    for i in r["versions"]:
+      if i["type"] == "release":
+        print(i["id"])
+
+
+"""
 api = tsbAPI()
 api.get_release()
 for k,v in api.releases.items():
   print(k)
   print(v)
+"""
 
+mojangAPI().fetch_release()
 
 
 
