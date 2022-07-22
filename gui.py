@@ -1,31 +1,16 @@
-#-*- coding: utf-8 -*-
-
-from kivy.app import App
-from kivy.uix.widget import Widget
-
-from kivy.properties import StringProperty
-
-class TextWidget(Widget):
-    text = StringProperty()
-
-    def __init__(self, **kwargs):
-        super(TextWidget, self).__init__(**kwargs)
-        self.text = ''
-
-    def buttonClicked(self):
-        self.text = 'Good morning'
-
-    def buttonClicked2(self):
-        self.text = 'Hello'
-
-    def buttonClicked3(self):
-        self.text = 'Good evening'
+from PySide2 import QtWidgets
 
 
-class TestApp(App):
-    def __init__(self, **kwargs):
-        super(TestApp, self).__init__(**kwargs)
-        self.title = 'greeting'
+# ウィンドウの見た目と各機能（今はウィンドウだけ）
+version = "0.1"
+class MainWindow(QtWidgets.QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle(f"TSBTools v{version}")
 
-if __name__ == '__main__':
-    TestApp().run()
+
+# アプリの実行と終了
+app = QtWidgets.QApplication()
+window = MainWindow()
+window.show()
+app.exec_()

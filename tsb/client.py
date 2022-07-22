@@ -33,13 +33,15 @@ class tsbAPI:
     """
     return self.releases if self.releases else self.fetch_release()
 
+
+
+"""
 api = tsbAPI()
 api.get_release()
 for k,v in api.releases.items():
   print(k)
   print(v)
-
-
+"""
 
 
 
