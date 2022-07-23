@@ -27,6 +27,7 @@ class tsbAPI:
       self.releases[r["tag_name"]] = {
         "name": r["name"],
         "body": r["body"],
+        "size": r["assets"][0]["size"],
         "download_url": r["assets"][0]["browser_download_url"]
         }
     return self.releases
@@ -79,18 +80,15 @@ class mojangAPI:
 
 
 
-
+"""
 api = tsbAPI()
 api.get_release()
 for k,v in api.releases.items():
   print(k)
   print(v)
+"""
 
 """
 mj = mojangAPI()
 print("\n".join(k+" "+v for k,v in mj.fetch_release().items()))
 """
-
-
-
-
