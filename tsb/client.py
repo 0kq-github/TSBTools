@@ -24,11 +24,14 @@ class tsbAPI:
     resp = requests.get(r["releases_url"][:-5])
     #r = resp.json()
     for r in resp.json():
+      for i in r["assets"]:
+        if i["browser_download_url"].split("/")[-1] == "TheSkyBlessing.zip":
+          download_url = i["browser_download_url"]
       self.releases[r["tag_name"]] = {
         "name": r["name"],
         "body": r["body"],
         "size": r["assets"][0]["size"],
-        "download_url": r["assets"][0]["browser_download_url"]
+        "download_url": download_url
         }
     return self.releases
     
