@@ -22,6 +22,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.md = markdown.Markdown()
         super().__init__()
         self.setupUi(self)
+        self
         self.setWindowTitle(f"TSBTools v{version}")
         self.setWindowIcon(QtGui.QIcon(QtGui.QPixmap(os.getcwd()+"\\assets\\tsb_icon.png")))
         self.textBrowser.setText(self.md.convert("###リリース一覧を読み込み中..."))
@@ -82,6 +83,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             if not (ret == QtWidgets.QMessageBox.Yes):
                 return
         ret = QtWidgets.QMessageBox.information(self,title,"起動構成を作成しますか？",QtWidgets.QMessageBox.Yes,QtWidgets.QMessageBox.No)
+        os.makedirs(install_path,exist_ok=True)
         self.install(install_path,self.comboBox.currentText())
         if ret == QtWidgets.QMessageBox.Yes:
             self.create_profile()
@@ -314,7 +316,7 @@ class load_mc_versions(QThread):
         except:
             pass
 
-
+QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 app = QtWidgets.QApplication()
 
 #ダークテーマ

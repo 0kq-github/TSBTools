@@ -1,0 +1,1 @@
+pyinstaller TSBTools.py --noconsole --onefile --icon=tsb.ico
