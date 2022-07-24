@@ -206,21 +206,8 @@
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
-      <string>ツール</string>
+      <string>アップデート</string>
      </attribute>
-     <widget class="QLabel" name="label_5">
-      <property name="geometry">
-       <rect>
-        <x>230</x>
-        <y>120</y>
-        <width>331</width>
-        <height>141</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:18pt;&quot;&gt;未実装&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
     </widget>
    </widget>
   </widget>

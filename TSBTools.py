@@ -17,7 +17,7 @@ import base64
 import shutil
 
 tsb = tsbAPI()
-version = "0.1"
+version = "0.1.1"
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         self.md = markdown.Markdown()
