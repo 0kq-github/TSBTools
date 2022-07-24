@@ -61,7 +61,7 @@ class Ui_MainWindow(object):
         self.lineEdit = QLineEdit(self.tab_1)
         self.lineEdit.setObjectName(u"lineEdit")
         self.lineEdit.setGeometry(QRect(490, 290, 251, 20))
-        self.lineEdit.setReadOnly(True)
+        self.lineEdit.setReadOnly(False)
         self.toolButton = QToolButton(self.tab_1)
         self.toolButton.setObjectName(u"toolButton")
         self.toolButton.setGeometry(QRect(750, 290, 31, 21))
