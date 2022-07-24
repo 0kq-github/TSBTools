@@ -99,25 +99,12 @@
        <string/>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_2">
+     <widget class="QPushButton" name="pushButton_3">
       <property name="geometry">
        <rect>
         <x>490</x>
         <y>390</y>
-        <width>141</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>起動構成を作成</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_3">
-      <property name="geometry">
-       <rect>
-        <x>640</x>
-        <y>390</y>
-        <width>141</width>
+        <width>291</width>
         <height>31</height>
        </rect>
       </property>
@@ -155,7 +142,7 @@
       <property name="geometry">
        <rect>
         <x>490</x>
-        <y>270</y>
+        <y>290</y>
         <width>251</width>
         <height>20</height>
        </rect>
@@ -168,7 +155,7 @@
       <property name="geometry">
        <rect>
         <x>750</x>
-        <y>270</y>
+        <y>290</y>
         <width>31</width>
         <height>21</height>
        </rect>
@@ -181,7 +168,7 @@
       <property name="geometry">
        <rect>
         <x>490</x>
-        <y>240</y>
+        <y>250</y>
         <width>141</width>
         <height>21</height>
        </rect>
@@ -194,7 +181,7 @@
       <property name="geometry">
        <rect>
         <x>640</x>
-        <y>240</y>
+        <y>250</y>
         <width>141</width>
         <height>23</height>
        </rect>
