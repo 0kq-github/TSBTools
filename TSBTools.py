@@ -14,6 +14,7 @@ import json
 import uuid
 import datetime
 import base64
+import shutil
 
 tsb = tsbAPI()
 version = "0.1"
@@ -65,7 +66,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.releases = r
 
     def select_mc(self):
-        path = QtWidgets.QFileDialog.getExistingDirectory(self,"ゲームディレクトリを開く")
+        path = QtWidgets.QFileDialog.getExistingDirectory(self,"ゲームディレクトリを開く",self.lineEdit.text())
         if path:
             self.lineEdit.setText(path)
     
@@ -78,13 +79,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         install_path = self.lineEdit.text()+"\\saves"
         if not self.check_input():
             return
-        if os.path.exists(install_path):
+        if os.path.exists(install_path+f"\\TheSkyBlessing_{self.comboBox.currentText()}"):
             ret = QtWidgets.QMessageBox.information(self,title,"ワールドが既に存在します。上書きしますか？",QtWidgets.QMessageBox.Yes,QtWidgets.QMessageBox.No)
             if not (ret == QtWidgets.QMessageBox.Yes):
                 return
         ret = QtWidgets.QMessageBox.information(self,title,"起動構成を作成しますか？",QtWidgets.QMessageBox.Yes,QtWidgets.QMessageBox.No)
         os.makedirs(install_path,exist_ok=True)
         self.install(install_path,self.comboBox.currentText())
+        if not os.path.exists(install_path+f"\\TheSkyBlessing_{self.comboBox.currentText()}\\level.dat"):
+            file_list = os.listdir(os.listdir(install_path+f"\\TheSkyBlessing_{self.comboBox.currentText()}\\TheSkyBlessing"))
+            for file in file_list:
+                shutil.move(file,f"\\TheSkyBlessing_{self.comboBox.currentText()}")
+            os.rmdir(f"\\TheSkyBlessing_{self.comboBox.currentText()}\\TheSKyBlessing")
         if ret == QtWidgets.QMessageBox.Yes:
             self.create_profile()
         mcversion = self.check_world_version(install_path+f"\\TheSkyBlessing_{self.comboBox.currentText()}"+"\\level.dat")
@@ -191,7 +197,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.server_ui.exec_()
 
     def select_server(self):
-        path = QtWidgets.QFileDialog.getExistingDirectory(self.server_ui,"サーバーの作成先を開く")
+        path = QtWidgets.QFileDialog.getExistingDirectory(self.server_ui,"サーバーの作成先を開く",self.server_ui.lineEdit.text())
         if path:
             self.server_ui.lineEdit.setText(path)
 

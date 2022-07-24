@@ -1,7 +1,5 @@
 import requests
 from threading import Thread
-import json
-import os
 
 class Dict(dict):
   def __init__(self,*args,**kwargs):
@@ -31,7 +29,8 @@ class tsbAPI:
         "name": r["name"],
         "body": r["body"],
         "size": r["assets"][0]["size"],
-        "download_url": download_url
+        "download_url": download_url,
+        "zipball_url": r["zipball_url"]
         }
     return self.releases
     
