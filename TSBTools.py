@@ -86,11 +86,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         ret = QtWidgets.QMessageBox.information(self,title,"起動構成を作成しますか？",QtWidgets.QMessageBox.Yes,QtWidgets.QMessageBox.No)
         os.makedirs(install_path,exist_ok=True)
         self.install(install_path,self.comboBox.currentText())
-        if not os.path.exists(install_path+f"\\TheSkyBlessing_{self.comboBox.currentText()}\\level.dat"):
-            file_list = os.listdir(os.listdir(install_path+f"\\TheSkyBlessing_{self.comboBox.currentText()}\\TheSkyBlessing"))
-            for file in file_list:
-                shutil.move(file,f"\\TheSkyBlessing_{self.comboBox.currentText()}")
-            os.rmdir(f"\\TheSkyBlessing_{self.comboBox.currentText()}\\TheSKyBlessing")
         if ret == QtWidgets.QMessageBox.Yes:
             self.create_profile()
         mcversion = self.check_world_version(install_path+f"\\TheSkyBlessing_{self.comboBox.currentText()}"+"\\level.dat")
@@ -145,6 +140,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 i += 1
                 prog.setValue(i)
                 prog.setLabelText("展開中:\n"+p)
+        if not os.path.exists(path+f"\\TheSkyBlessing_{ver}\\level.dat"):
+            file_list = os.listdir(os.listdir(path+f"\\TheSkyBlessing_{ver}\\TheSkyBlessing"))
+            for file in file_list:
+                shutil.move(file,f"\\TheSkyBlessing_{ver}")
+            os.rmdir(f"\\TheSkyBlessing_{ver}\\TheSKyBlessing")
         prog.close()
 
     def check_world_version(self,nbt_path):
