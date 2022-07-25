@@ -17,15 +17,21 @@ class tsbAPI:
     resp = requests.get(r["releases_url"][:-5])
     #r = resp.json()
     for r in resp.json():
+      datapack = None
       for i in r["assets"]:
         if i["browser_download_url"].split("/")[-1] == "TheSkyBlessing.zip":
           download_url = i["browser_download_url"]
+          size = i["size"]
+        if i["browser_download_url"].split("/")[-1] == "datapacks.zip":
+          datapack = i["browser_download_url"]
+          datapack_size = i["size"]
       self.releases[r["tag_name"]] = {
         "name": r["name"],
         "body": r["body"],
-        "size": r["assets"][0]["size"],
+        "size": size,
         "download_url": download_url,
-        "zipball_url": r["zipball_url"]
+        "datapack_size":datapack_size,
+        "datapack":datapack
         }
     return self.releases
     

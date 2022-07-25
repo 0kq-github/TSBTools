@@ -221,14 +221,14 @@
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ワールド一覧&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_2">
+     <widget class="QPushButton" name="pushButton_datapack_update">
       <property name="enabled">
        <bool>false</bool>
       </property>
       <property name="geometry">
        <rect>
         <x>490</x>
-        <y>140</y>
+        <y>190</y>
         <width>141</width>
         <height>41</height>
        </rect>
@@ -237,7 +237,7 @@
        <string>データパックをアップデート</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_4">
+     <widget class="QPushButton" name="pushButton_level_update">
       <property name="enabled">
        <bool>false</bool>
       </property>
@@ -253,14 +253,14 @@
        <string>最新のcommitを適用</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_5">
+     <widget class="QPushButton" name="pushButton_datapack_delete">
       <property name="enabled">
        <bool>false</bool>
       </property>
       <property name="geometry">
        <rect>
         <x>640</x>
-        <y>190</y>
+        <y>140</y>
         <width>141</width>
         <height>41</height>
        </rect>
@@ -269,7 +269,7 @@
        <string>データパックを削除</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_6">
+     <widget class="QPushButton" name="pushButton_level_explorer">
       <property name="enabled">
        <bool>false</bool>
       </property>
@@ -285,7 +285,7 @@
        <string>エクスプローラーで表示</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_7">
+     <widget class="QPushButton" name="pushButton_level_vscode">
       <property name="enabled">
        <bool>false</bool>
       </property>
@@ -301,13 +301,13 @@
        <string>VSCodeで開く</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_8">
+     <widget class="QPushButton" name="pushButton_datapack_extract">
       <property name="enabled">
        <bool>false</bool>
       </property>
       <property name="geometry">
        <rect>
-        <x>640</x>
+        <x>490</x>
         <y>140</y>
         <width>141</width>
         <height>41</height>
@@ -317,7 +317,7 @@
        <string>データパックを展開</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_9">
+     <widget class="QPushButton" name="pushButton_level_extractall">
       <property name="enabled">
        <bool>false</bool>
       </property>
@@ -333,13 +333,13 @@
        <string>全てのデータパックを展開</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_10">
+     <widget class="QPushButton" name="pushButton_datapack_add">
       <property name="enabled">
        <bool>false</bool>
       </property>
       <property name="geometry">
        <rect>
-        <x>490</x>
+        <x>640</x>
         <y>190</y>
         <width>141</width>
         <height>41</height>
@@ -431,6 +431,19 @@
       </property>
       <property name="text">
        <string>自動検出</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_12">
+      <property name="geometry">
+       <rect>
+        <x>390</x>
+        <y>20</y>
+        <width>91</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>再読み込み</string>
       </property>
      </widget>
     </widget>

@@ -59,30 +59,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pushButton_1.clicked.connect(self.install_client)
         self.pushButton_3.clicked.connect(self.create_server)
 
-        saves_dir = os.environ["appdata"] + "\\.minecraft\\saves"
-        self.lineEdit_2.setText(saves_dir)
+        self.saves_dir = os.environ["appdata"] + "\\.minecraft\\saves"
+        self.lineEdit_2.setText(self.saves_dir)
         self.pushButton_11.clicked.connect(self.detect_saves)
         self.toolButton_2.clicked.connect(self.select_saves)
+        self.load_levels()
+        self.pushButton_12.clicked.connect(self.reload_levels)
+        self.treeWidget.currentItemChanged.connect(self.detect_selection)
 
         
-        for d in os.listdir(saves_dir):
-            if os.path.isdir(saves_dir+"\\"+d):
-                mcversion,levelname = self.get_world_info(saves_dir+"\\"+d+"\\level.dat")
-                levelname = re.sub("§.","",levelname)
-                dir_tree = QtWidgets.QTreeWidgetItem([d,f"{mcversion} - {levelname}"])
-                datapacks = os.listdir(saves_dir+"\\"+d+"\\datapacks")
-                for dp in datapacks:
-                    if dp.endswith(".zip"):
-                        with zipfile.ZipFile(saves_dir+"\\"+d+"\\datapacks\\"+dp) as zf:
-                            zf.extract("pack.mcmeta",os.getcwd()+"\\temp")
-                            with open(os.getcwd()+"\\temp\\pack.mcmeta",mode="r",encoding="utf-8_sig") as f:
-                                mcmeta = json.load(f)
-                                dir_tree.addChild(QtWidgets.QTreeWidgetItem([dp,mcmeta["pack"]["description"]]))
-                    if os.path.isdir(saves_dir+"\\"+d+"\\datapacks\\"+dp):
-                        with open(saves_dir+"\\"+d+"\\datapacks\\"+dp+"\\pack.mcmeta",mode="r",encoding="utf-8_sig") as f:
-                            mcmeta = json.load(f)
-                            dir_tree.addChild(QtWidgets.QTreeWidgetItem([dp,mcmeta["pack"]["description"]]))
-                self.treeWidget.addTopLevelItem(dir_tree)
 
         
     
@@ -135,17 +120,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             prog = QtWidgets.QProgressDialog(self)
         prog.setWindowModality(Qt.ApplicationModal)
         prog.setWindowTitle("TSBTools")
-        prog.setLabelText("TheSkyBlessing "+ver+"をダウンロード中...")
+        prog.setLabelText("ダウンロード中:\n"+"TheSkyBlessing "+ver)
         prog.setFixedWidth(400)
         prog.setFixedHeight(100)
         prog.setValue(0)
         prog.setCancelButton(None)
         prog.setWindowFlags(Qt.Window)
+        prog.setAutoClose(False)
         file_size = tsb.releases[ver]["size"]
         prog.setMaximum(file_size)
         prog.show()
         res = requests.get(download_url,stream=True)
-        i = 1
+        i = 0
         os.makedirs(os.getcwd()+"\\download",exist_ok=True)
         zip_path = os.getcwd()+f"\\download\\{ver}.zip"
         with open(zip_path,"wb") as f:
@@ -153,6 +139,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 f.write(chunk)
                 i += len(chunk)
                 prog.setValue(i)
+        """
         prog.close()
         if parent:
             prog = QtWidgets.QProgressDialog(parent)
@@ -162,11 +149,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         prog.setWindowTitle("TSBTools")
         prog.setFixedWidth(400)
         prog.setFixedHeight(100)
-        prog.setValue(0)
         prog.setCancelButton(None)
         prog.setWindowFlags(Qt.Window)
         prog.show()
-        i = 1
+        """
+        prog.setValue(0)
+        i = 0
         with zipfile.ZipFile(zip_path) as zf:
             files = zf.namelist()
             prog.setMaximum(len(files))
@@ -274,7 +262,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         prog = QtWidgets.QProgressDialog(self.server_ui)
         prog.setWindowModality(Qt.ApplicationModal)
         prog.setWindowTitle("TSBTools")
-        prog.setLabelText("server.jarをダウンロード中...")
+        prog.setLabelText("ダウンロード中:\n"+"server.jar")
         prog.setCancelButton(None)
         prog.setFixedWidth(400)
         prog.setFixedHeight(100)
@@ -313,6 +301,67 @@ java -Xmx{self.server_ui.spinBox_2.value()}G -Xms{self.server_ui.spinBox_2.value
 pause"""
             f.write(start_bat)
         QtWidgets.QMessageBox.information(self.server_ui,"TSBTools",f"サーバーの作成が完了しました！\nサーバー起動ファイル:\n{install_path}\\start.bat")
+
+    def load_levels(self):
+        saves_dir = self.saves_dir
+        self.treeWidget.clear()
+        for d in os.listdir(saves_dir):
+            if os.path.isdir(saves_dir+"\\"+d):
+                mcversion,levelname = self.get_world_info(saves_dir+"\\"+d+"\\level.dat")
+                levelname = re.sub("§.","",levelname)
+                dir_tree = QtWidgets.QTreeWidgetItem([d,f"{levelname} ({mcversion})"])
+                datapacks = os.listdir(saves_dir+"\\"+d+"\\datapacks")
+                for dp in datapacks:
+                    if dp.endswith(".zip"):
+                        with zipfile.ZipFile(saves_dir+"\\"+d+"\\datapacks\\"+dp) as zf:
+                            zf.extract("pack.mcmeta",os.getcwd()+"\\temp")
+                            with open(os.getcwd()+"\\temp\\pack.mcmeta",mode="r",encoding="utf-8_sig") as f:
+                                mcmeta = json.load(f)
+                                dir_tree.addChild(QtWidgets.QTreeWidgetItem([dp,mcmeta["pack"]["description"]]))
+                    if os.path.isdir(saves_dir+"\\"+d+"\\datapacks\\"+dp):
+                        with open(saves_dir+"\\"+d+"\\datapacks\\"+dp+"\\pack.mcmeta",mode="r",encoding="utf-8_sig") as f:
+                            mcmeta = json.load(f)
+                            dir_tree.addChild(QtWidgets.QTreeWidgetItem([dp,mcmeta["pack"]["description"]]))
+                self.treeWidget.addTopLevelItem(dir_tree)
+
+    def reload_levels(self):
+        self.load_levels()
+        self.detect_selection()
+
+
+
+    def detect_selection(self):
+        current = self.treeWidget.currentItem()
+        if current:
+            parent = self.treeWidget.currentItem().parent()
+            if parent:
+                self.selected_level = parent.text(0)
+                self.selected_datapack = current.text(0)
+                self.set_level_buttons(True)
+                self.set_datapack_buttons(True)
+            else:
+                self.selected_level = current.text(0)
+                self.selected_datapack = None
+                self.set_level_buttons(True)
+                self.set_datapack_buttons(False)
+        else:
+            self.selected_level = None
+            self.selected_datapack = None
+            self.set_level_buttons(False)
+            self.set_datapack_buttons(False)
+
+    def set_level_buttons(self,enable):
+        self.pushButton_level_update.setEnabled(enable)
+        self.pushButton_level_vscode.setEnabled(enable)
+        self.pushButton_level_explorer.setEnabled(enable)
+        self.pushButton_level_extractall.setEnabled(enable)
+        self.pushButton_datapack_update.setEnabled(enable)
+        self.pushButton_datapack_add.setEnabled(enable)
+
+    def set_datapack_buttons(self,enable):
+        self.pushButton_datapack_delete.setEnabled(enable)
+        self.pushButton_datapack_extract.setEnabled(enable)
+
 
 
 class server_ui(QtWidgets.QDialog,Ui_Dialog):
