@@ -1,10 +1,11 @@
 from PySide2 import QtWidgets,QtGui
-from PySide2.QtCore import QThread,Signal,Qt
+from PySide2.QtCore import QThread,Signal,Qt,QByteArray
 from PySide2.QtGui import QPalette, QColor
 from main_ui import Ui_MainWindow
 from server_ui import Ui_Dialog
 from tsb.client import tsbAPI
 from tsb.client import mojangAPI
+from tsb import icons
 import markdown
 import os
 import requests
@@ -26,7 +27,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self
         self.setWindowTitle(f"TSBTools v{version}")
-        self.setWindowIcon(QtGui.QIcon(QtGui.QPixmap(os.getcwd()+"\\assets\\tsb_icon.png")))
+        icon = QtGui.QPixmap()
+        icon.loadFromData(QByteArray.fromBase64(bytes(icons.tsb,encoding="utf-8")))
+        self.setWindowIcon(QtGui.QIcon(icon))
         self.textBrowser.setText(self.md.convert("###リリース一覧を読み込み中..."))
 
         self.thread = load_tsb_releases(self)
@@ -41,10 +44,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     Tool created by 0kq 
     <br><br>
     <a style=\"text-decoration:none;\" href=\"https://twitter.com/_0kq_\">
-        <img src=\"{os.getcwd()}\\assets\\twitter.png\" alt=\"Twitter\" width=32 height=26>
+        <img src=\"data:image/png;base64,{icons.twitter}\" alt=\"Twitter\" width=32 height=26>
     </a> 
     <a style=\"text-decoration:none;\" href=\"https://github.com/0kq-github\">
-        <img src=\"{os.getcwd()}\\assets\\github.png\" alt=\"GitHub\" width=32 height=32>
+        <img src=\"data:image/png;base64,{icons.github}\" alt=\"GitHub\" width=32 height=32>
     </a>
     <br><br>
     <a href=\"https://tsb.scriptarts.jp/\">
@@ -132,8 +135,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         prog.show()
         res = requests.get(download_url,stream=True)
         i = 0
-        os.makedirs(os.getcwd()+"\\download",exist_ok=True)
-        zip_path = os.getcwd()+f"\\download\\{ver}.zip"
+        os.makedirs(os.getcwd()+"\\TSBTools\\download",exist_ok=True)
+        zip_path = os.getcwd()+f"\\TSBTools\\download\\{ver}.zip"
         with open(zip_path,"wb") as f:
             for chunk in res.iter_content(chunk_size=1024):
                 f.write(chunk)
@@ -305,23 +308,36 @@ pause"""
     def load_levels(self):
         saves_dir = self.saves_dir
         self.treeWidget.clear()
+        if not os.path.exists(saves_dir):
+            return
         for d in os.listdir(saves_dir):
             if os.path.isdir(saves_dir+"\\"+d):
-                mcversion,levelname = self.get_world_info(saves_dir+"\\"+d+"\\level.dat")
-                levelname = re.sub("§.","",levelname)
+                if not os.path.exists(saves_dir+"\\"+d+"\\level.dat"):
+                    continue
+                try:
+                    mcversion,levelname = self.get_world_info(saves_dir+"\\"+d+"\\level.dat")
+                except:
+                    continue
+                if levelname:
+                    levelname = re.sub("§.","",levelname)
+                else:
+                    levelname = d
+                if not mcversion:
+                    mcversion = "バージョン不明"
                 dir_tree = QtWidgets.QTreeWidgetItem([d,f"{levelname} ({mcversion})"])
-                datapacks = os.listdir(saves_dir+"\\"+d+"\\datapacks")
-                for dp in datapacks:
-                    if dp.endswith(".zip"):
-                        with zipfile.ZipFile(saves_dir+"\\"+d+"\\datapacks\\"+dp) as zf:
-                            zf.extract("pack.mcmeta",os.getcwd()+"\\temp")
-                            with open(os.getcwd()+"\\temp\\pack.mcmeta",mode="r",encoding="utf-8_sig") as f:
+                if os.path.exists(saves_dir+"\\"+d+"\\datapacks"):
+                    datapacks = os.listdir(saves_dir+"\\"+d+"\\datapacks")
+                    for dp in datapacks:
+                        if dp.endswith(".zip"):
+                            with zipfile.ZipFile(saves_dir+"\\"+d+"\\datapacks\\"+dp) as zf:
+                                zf.extract("pack.mcmeta",os.getcwd()+"\\temp")
+                                with open(os.getcwd()+"\\temp\\pack.mcmeta",mode="r",encoding="utf-8_sig") as f:
+                                    mcmeta = json.load(f)
+                                    dir_tree.addChild(QtWidgets.QTreeWidgetItem([dp,mcmeta["pack"]["description"]]))
+                        if os.path.isdir(saves_dir+"\\"+d+"\\datapacks\\"+dp):
+                            with open(saves_dir+"\\"+d+"\\datapacks\\"+dp+"\\pack.mcmeta",mode="r",encoding="utf-8_sig") as f:
                                 mcmeta = json.load(f)
                                 dir_tree.addChild(QtWidgets.QTreeWidgetItem([dp,mcmeta["pack"]["description"]]))
-                    if os.path.isdir(saves_dir+"\\"+d+"\\datapacks\\"+dp):
-                        with open(saves_dir+"\\"+d+"\\datapacks\\"+dp+"\\pack.mcmeta",mode="r",encoding="utf-8_sig") as f:
-                            mcmeta = json.load(f)
-                            dir_tree.addChild(QtWidgets.QTreeWidgetItem([dp,mcmeta["pack"]["description"]]))
                 self.treeWidget.addTopLevelItem(dir_tree)
 
     def reload_levels(self):

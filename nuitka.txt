@@ -1,1 +1,1 @@
-python -m nuitka --standalone --onefile --windows-disable-console --plugin-enable=pyside2 --windows-icon-from-ico=./tsb.ico --include-data-file="./assets/*=./assets/" TSBTools.py
+python -m nuitka --standalone --onefile --windows-disable-console --plugin-enable=pyside2 --windows-icon-from-ico=tsb.ico --include-data-dir=assets=assets TSBTools.py

@@ -417,7 +417,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;savesフォルダ&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;savesフォルダ&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;又はサーバーのフォルダ&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
      <widget class="QPushButton" name="pushButton_11">
@@ -463,7 +463,7 @@
      <x>0</x>
      <y>0</y>
      <width>803</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
