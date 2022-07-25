@@ -15,6 +15,7 @@ import uuid
 import datetime
 import base64
 import shutil
+import re
 
 tsb = tsbAPI()
 version = "0.1.1"
@@ -57,6 +58,32 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.toolButton.clicked.connect(self.select_mc)
         self.pushButton_1.clicked.connect(self.install_client)
         self.pushButton_3.clicked.connect(self.create_server)
+
+        saves_dir = os.environ["appdata"] + "\\.minecraft\\saves"
+        self.lineEdit_2.setText(saves_dir)
+        self.pushButton_11.clicked.connect(self.detect_saves)
+        self.toolButton_2.clicked.connect(self.select_saves)
+
+        
+        for d in os.listdir(saves_dir):
+            if os.path.isdir(saves_dir+"\\"+d):
+                mcversion,levelname = self.get_world_info(saves_dir+"\\"+d+"\\level.dat")
+                levelname = re.sub("§.","",levelname)
+                dir_tree = QtWidgets.QTreeWidgetItem([d,f"{mcversion} - {levelname}"])
+                datapacks = os.listdir(saves_dir+"\\"+d+"\\datapacks")
+                for dp in datapacks:
+                    if dp.endswith(".zip"):
+                        with zipfile.ZipFile(saves_dir+"\\"+d+"\\datapacks\\"+dp) as zf:
+                            zf.extract("pack.mcmeta",os.getcwd()+"\\temp")
+                            with open(os.getcwd()+"\\temp\\pack.mcmeta",mode="r",encoding="utf-8_sig") as f:
+                                mcmeta = json.load(f)
+                                dir_tree.addChild(QtWidgets.QTreeWidgetItem([dp,mcmeta["pack"]["description"]]))
+                    if os.path.isdir(saves_dir+"\\"+d+"\\datapacks\\"+dp):
+                        with open(saves_dir+"\\"+d+"\\datapacks\\"+dp+"\\pack.mcmeta",mode="r",encoding="utf-8_sig") as f:
+                            mcmeta = json.load(f)
+                            dir_tree.addChild(QtWidgets.QTreeWidgetItem([dp,mcmeta["pack"]["description"]]))
+                self.treeWidget.addTopLevelItem(dir_tree)
+
         
     
     def show_tsb_releases(self,releases):
@@ -70,9 +97,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if path:
             self.lineEdit.setText(path)
     
+    def select_saves(self):
+        path = QtWidgets.QFileDialog.getExistingDirectory(self,"savesを開く",self.lineEdit_2.text())
+        if path:
+            self.lineEdit_2.setText(path)
+    
     def detect_mc(self):
         path = os.environ["appdata"] + "\\.minecraft"
         self.lineEdit.setText(path)
+    
+    def detect_saves(self):
+        path = os.environ["appdata"] + "\\.minecraft\\saves"
+        self.lineEdit_2.setText(path)
 
     def install_client(self):
         title = "TSBTools"
@@ -88,7 +124,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.install(install_path,self.comboBox.currentText())
         if ret == QtWidgets.QMessageBox.Yes:
             self.create_profile()
-        mcversion = self.check_world_version(install_path+f"\\TheSkyBlessing_{self.comboBox.currentText()}"+"\\level.dat")
+        mcversion, levelname = self.get_world_info(install_path+f"\\TheSkyBlessing_{self.comboBox.currentText()}"+"\\level.dat")
         QtWidgets.QMessageBox.information(self,title,f"インストールが完了しました！\nTSB {self.comboBox.currentText()}\nMinecraft {mcversion}")
 
     def install(self,path,ver,parent=None):
@@ -109,7 +145,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         prog.setMaximum(file_size)
         prog.show()
         res = requests.get(download_url,stream=True)
-        i = 0
+        i = 1
         os.makedirs(os.getcwd()+"\\download",exist_ok=True)
         zip_path = os.getcwd()+f"\\download\\{ver}.zip"
         with open(zip_path,"wb") as f:
@@ -130,7 +166,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         prog.setCancelButton(None)
         prog.setWindowFlags(Qt.Window)
         prog.show()
-        i = 0
+        i = 1
         with zipfile.ZipFile(zip_path) as zf:
             files = zf.namelist()
             prog.setMaximum(len(files))
@@ -147,14 +183,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             os.rmdir(f"\\TheSkyBlessing_{ver}\\TheSKyBlessing")
         prog.close()
 
-    def check_world_version(self,nbt_path):
+    def get_world_info(self,nbt_path):
+        """ワールドの情報を取得
+
+        Args:
+            nbt_path (str): level.dat
+
+        Returns:
+            list: [Version, LevelName]
+        """
+        result = [None,None]
         with open(nbt_path,"rb") as f:
-            nbt= nbt2yaml.parse_nbt(f)
+            nbt = nbt2yaml.parse_nbt(f)
             for n in nbt.data[0].data:
                 if n.name == "Version":
                     for nm in n.data:
                         if nm.name == "Name":
-                            return nm.data
+                            result[0] = (nm.data)
+                if n.name == "LevelName":
+                    result[1] = (n.data)
+        return result
 
     def check_input(self):
         if not self.comboBox.currentText():
@@ -170,7 +218,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             return
         launcher_profiles = os.environ["appdata"]+"\\.minecraft\\launcher_profiles.json"
         profile_uuid = uuid.uuid4().hex
-        mcversion = self.check_world_version(self.lineEdit.text()+"\\saves\\"+f"TheSkyBlessing_{self.comboBox.currentText()}"+"\\level.dat")
+        mcversion,levelname = self.get_world_info(self.lineEdit.text()+"\\saves\\"+f"TheSkyBlessing_{self.comboBox.currentText()}"+"\\level.dat")
         with open(launcher_profiles,mode="r") as f:
             profiles = json.load(f)
             profiles["profiles"][profile_uuid] = {
@@ -219,7 +267,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 return
         os.makedirs(install_path,exist_ok=True)
         self.install(install_path,self.server_ui.comboBox.currentText(),parent=self.server_ui)
-        mcversion = self.check_world_version(install_path+f"\\TheSkyBlessing_{self.server_ui.comboBox.currentText()}\\level.dat")
+        mcversion,levelname = self.get_world_info(install_path+f"\\TheSkyBlessing_{self.server_ui.comboBox.currentText()}\\level.dat")
         mc = mojangAPI()
         mc_releases = mc.fetch_release()
         download_url = mc_releases[mcversion]
@@ -310,6 +358,9 @@ class load_tsb_releases(QThread):
             print(e)
         self.signal.emit(([v for v in tsb.releases.keys()],md.convert(tsb_md.replace("*","#### ・")),))
 
+class load_saves(QThread):
+    signal = Signal(list)
+    
 
 class load_mc_versions(QThread):
     signal = Signal(dict)

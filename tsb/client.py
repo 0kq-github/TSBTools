@@ -1,11 +1,6 @@
 import requests
 from threading import Thread
 
-class Dict(dict):
-  def __init__(self,*args,**kwargs):
-    super().__init__(*args,**kwargs)
-    self.__dict__ = self
-
 class tsbAPI:
   def __init__(self):
     self.repo_url = "https://api.github.com/repos/ProjectTSB/TheSkyBlessing"
@@ -14,7 +9,7 @@ class tsbAPI:
   def fetch_release(self):
     """実行時点のリリース一覧を取得します
 
-    Returns: Dict
+    Returns: dict
     """
     resp = requests.get(self.repo_url)
     r = resp.json()

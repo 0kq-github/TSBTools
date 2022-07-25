@@ -1,2 +1,1 @@
-pyside2-uic.exe main.ui -o main_ui.py
-pyside2-uic.exe server.ui -o server_ui.py
+pyside2-uic.exe main.ui -o main_ui.py & pyside2-uic.exe server.ui -o server_ui.py
