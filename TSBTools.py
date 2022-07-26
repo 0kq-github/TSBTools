@@ -3,6 +3,7 @@ from PySide6.QtCore import QThread,Signal,Qt,QByteArray
 from PySide6.QtGui import QPalette, QColor
 from main_ui import Ui_MainWindow
 from server_ui import Ui_Dialog
+import qdarktheme
 from tsb.client import tsbAPI
 from tsb.client import mojangAPI
 from tsb import icons
@@ -25,7 +26,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.md = markdown.Markdown()
         super().__init__()
         self.setupUi(self)
-        self
+        #self.pushButton_exit.clicked.connect(self.close)
+        #self.pushButton_exit.setStyleSheet('QPushButton {color: white; font-size: 18px;}')
+        #self.label_icon.setText(f"<img src=\"data:image/png;base64,{icons.tsb}\" width=21 height=21>")
         self.setWindowTitle(f"TSBTools v{version}")
         icon = QtGui.QPixmap()
         icon.loadFromData(QByteArray.fromBase64(bytes(icons.tsb,encoding="utf-8")))
@@ -233,7 +236,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.server_ui.comboBox.setCurrentText(self.comboBox.currentText())
         self.server_ui.toolButton.clicked.connect(self.select_server)
         self.server_ui.pushButton.clicked.connect(self.install_server)
-        self.server_ui.exec_()
+        self.server_ui.exec()
 
     def select_server(self):
         path = QtWidgets.QFileDialog.getExistingDirectory(self.server_ui,"サーバーの作成先を開く",self.server_ui.lineEdit.text())
@@ -441,6 +444,8 @@ class load_mc_versions(QThread):
 QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
 app = QtWidgets.QApplication()
 
+app.setStyleSheet(qdarktheme.load_stylesheet())
+
 #ダークテーマ
 """
 app.setStyle("Windows")
@@ -462,5 +467,6 @@ app.setPalette(palette)
 """
 
 window = MainWindow()
+#window.setWindowFlags(Qt.FramelessWindowHint)
 window.show()
-app.exec_()
+app.exec()
