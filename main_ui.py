@@ -3,14 +3,14 @@
 ################################################################################
 ## Form generated from reading UI file 'main.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.15.2
+## Created by: Qt User Interface Compiler version 6.1.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide2.QtCore import *
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
+from PySide6.QtCore import *  # type: ignore
+from PySide6.QtGui import *  # type: ignore
+from PySide6.QtWidgets import *  # type: ignore
 
 
 class Ui_MainWindow(object):
@@ -143,7 +143,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 803, 22))
+        self.menubar.setGeometry(QRect(0, 0, 803, 21))
         MainWindow.setMenuBar(self.menubar)
 
         self.retranslateUi(MainWindow)
@@ -179,7 +179,7 @@ class Ui_MainWindow(object):
         ___qtreewidgetitem.setText(1, QCoreApplication.translate("MainWindow", u"\u8a73\u7d30", None));
         ___qtreewidgetitem.setText(0, QCoreApplication.translate("MainWindow", u"\u30ef\u30fc\u30eb\u30c9 / \u30c7\u30fc\u30bf\u30d1\u30c3\u30af", None));
         self.toolButton_2.setText(QCoreApplication.translate("MainWindow", u"...", None))
-        self.label_6.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\">saves\u30d5\u30a9\u30eb\u30c0</p></body></html>", None))
+        self.label_6.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\">saves\u30d5\u30a9\u30eb\u30c0</p><p align=\"center\">\u53c8\u306f\u30b5\u30fc\u30d0\u30fc\u306e\u30d5\u30a9\u30eb\u30c0</p></body></html>", None))
         self.pushButton_11.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52d5\u691c\u51fa", None))
         self.pushButton_12.setText(QCoreApplication.translate("MainWindow", u"\u518d\u8aad\u307f\u8fbc\u307f", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"\u30c4\u30fc\u30eb (\u4e00\u822c)", None))

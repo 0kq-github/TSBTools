@@ -1,6 +1,6 @@
-from PySide2 import QtWidgets,QtGui
-from PySide2.QtCore import QThread,Signal,Qt,QByteArray
-from PySide2.QtGui import QPalette, QColor
+from PySide6 import QtWidgets,QtGui
+from PySide6.QtCore import QThread,Signal,Qt,QByteArray
+from PySide6.QtGui import QPalette, QColor
 from main_ui import Ui_MainWindow
 from server_ui import Ui_Dialog
 from tsb.client import tsbAPI
