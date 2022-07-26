@@ -3,15 +3,22 @@
 ################################################################################
 ## Form generated from reading UI file 'server.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.1.1
+## Created by: Qt User Interface Compiler version 6.3.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import *  # type: ignore
-from PySide6.QtGui import *  # type: ignore
-from PySide6.QtWidgets import *  # type: ignore
-
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDialog,
+    QLabel, QLineEdit, QPushButton, QSizePolicy,
+    QSlider, QSpinBox, QTextEdit, QToolButton,
+    QWidget)
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -104,12 +111,13 @@ class Ui_Dialog(object):
         self.checkBox.setText(QCoreApplication.translate("Dialog", u"EULA\u306b\u540c\u610f\u3059\u308b", None))
         self.pushButton.setText(QCoreApplication.translate("Dialog", u"\u4f5c\u6210", None))
         self.label_3.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p align=\"center\">\u30d7\u30ec\u30a4\u30e4\u30fc\u6570\u4e0a\u9650</p></body></html>", None))
-        self.label_6.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p align=\"center\"><a href=\"https://www.minecraft.net/ja-jp/eula\"><span style=\" text-decoration: underline; color:#0000ff;\">Minecraft EULA</span></a></p></body></html>", None))
+        self.label_6.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p align=\"center\"><a href=\"https://www.minecraft.net/ja-jp/eula\"><span style=\"text-decoration:none; color:#6bb4f7\">Minecraft EULA</span></a></p></body></html>", None))
         self.label_7.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p align=\"center\">MOTD</p></body></html>", None))
         self.textEdit.setHtml(QCoreApplication.translate("Dialog", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:'MS UI Gothic'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">\\u00A7eThe\\u00A7a Sky\\u00A7d Blessing \\u00a76 %s \\u00A7f- \\u00A7b%s</p></body></html>", None))
+"hr { height: 1px; border-width: 0; }\n"
+"</style></head><body style=\" font-family:'Yu Gothic UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS UI Gothic';\">\\u00A7eThe\\u00A7a Sky\\u00A7d Blessing \\u00a76 %s \\u00A7f- \\u00A7b%s</span></p></body></html>", None))
     # retranslateUi
 

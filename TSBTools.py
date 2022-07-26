@@ -50,10 +50,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         <img src=\"data:image/png;base64,{icons.twitter}\" alt=\"Twitter\" width=32 height=26>
     </a> 
     <a style=\"text-decoration:none;\" href=\"https://github.com/0kq-github\">
-        <img src=\"data:image/png;base64,{icons.github}\" alt=\"GitHub\" width=32 height=32>
+        <img src=\"data:image/png;base64,{icons.github_light}\" alt=\"GitHub\" width=32 height=32>
     </a>
     <br><br>
-    <a href=\"https://tsb.scriptarts.jp/\">
+    <a style=\"text-decoration:none; color:#6bb4f7;\" href=\"https://tsb.scriptarts.jp/\">
         TSB公式サイト
     </a>
 </h3>
@@ -72,6 +72,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.load_levels()
         self.pushButton_12.clicked.connect(self.reload_levels)
         self.treeWidget.currentItemChanged.connect(self.detect_selection)
+
+
+
 
         
 
@@ -145,20 +148,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 f.write(chunk)
                 i += len(chunk)
                 prog.setValue(i)
-        """
-        prog.close()
-        if parent:
-            prog = QtWidgets.QProgressDialog(parent)
-        else:
-            prog = QtWidgets.QProgressDialog(self)
-        prog.setWindowModality(Qt.ApplicationModal)
-        prog.setWindowTitle("TSBTools")
-        prog.setFixedWidth(400)
-        prog.setFixedHeight(100)
-        prog.setCancelButton(None)
-        prog.setWindowFlags(Qt.Window)
-        prog.show()
-        """
         prog.setValue(0)
         i = 0
         with zipfile.ZipFile(zip_path) as zf:
@@ -441,32 +430,15 @@ class load_mc_versions(QThread):
         except:
             pass
 
-QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-app = QtWidgets.QApplication()
 
-app.setStyleSheet(qdarktheme.load_stylesheet())
+if __name__ == "__main__":
+    QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
+    app = QtWidgets.QApplication()
 
-#ダークテーマ
-"""
-app.setStyle("Windows")
-palette = QPalette()
-palette.setColor(QPalette.Window, QColor(53, 53, 53))
-palette.setColor(QPalette.WindowText, Qt.white)
-palette.setColor(QPalette.Base, QColor(25, 25, 25))
-palette.setColor(QPalette.AlternateBase, QColor(53, 53, 53))
-palette.setColor(QPalette.ToolTipBase, Qt.black)
-palette.setColor(QPalette.ToolTipText, Qt.white)
-palette.setColor(QPalette.Text, Qt.white)
-palette.setColor(QPalette.Button, QColor(53, 53, 53))
-palette.setColor(QPalette.ButtonText, Qt.white)
-palette.setColor(QPalette.BrightText, Qt.red)
-palette.setColor(QPalette.Link, QColor(42, 130, 218))
-palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
-palette.setColor(QPalette.HighlightedText, Qt.black)
-app.setPalette(palette)
-"""
+    #ダークテーマ
+    app.setStyleSheet(qdarktheme.load_stylesheet())
 
-window = MainWindow()
-#window.setWindowFlags(Qt.FramelessWindowHint)
-window.show()
-app.exec()
+    window = MainWindow()
+    #window.setWindowFlags(Qt.FramelessWindowHint)
+    window.show()
+    app.exec()
