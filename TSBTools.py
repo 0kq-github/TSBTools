@@ -333,8 +333,8 @@ pause"""
                     for dp in datapacks:
                         if dp.endswith(".zip"):
                             with zipfile.ZipFile(saves_dir+"\\"+d+"\\datapacks\\"+dp) as zf:
-                                zf.extract("pack.mcmeta",os.getcwd()+"\\temp")
-                                with open(os.getcwd()+"\\temp\\pack.mcmeta",mode="r",encoding="utf-8_sig") as f:
+                                zf.extract("pack.mcmeta",os.getcwd()+"\\TSBTools\\temp")
+                                with open(os.getcwd()+"\\TSBTools\\temp\\pack.mcmeta",mode="r",encoding="utf-8_sig") as f:
                                     mcmeta = json.load(f)
                                     dir_tree.addChild(QtWidgets.QTreeWidgetItem([dp,mcmeta["pack"]["description"]]))
                         if os.path.isdir(saves_dir+"\\"+d+"\\datapacks\\"+dp):
