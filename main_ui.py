@@ -150,7 +150,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 803, 21))
+        self.menubar.setGeometry(QRect(0, 0, 803, 22))
         MainWindow.setMenuBar(self.menubar)
 
         self.retranslateUi(MainWindow)
@@ -189,7 +189,7 @@ class Ui_MainWindow(object):
         self.label_6.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\">saves\u30d5\u30a9\u30eb\u30c0</p><p align=\"center\">\u53c8\u306f\u30b5\u30fc\u30d0\u30fc\u306e\u30d5\u30a9\u30eb\u30c0</p></body></html>", None))
         self.pushButton_11.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52d5\u691c\u51fa", None))
         self.pushButton_12.setText(QCoreApplication.translate("MainWindow", u"\u518d\u8aad\u307f\u8fbc\u307f", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"\u30c4\u30fc\u30eb (\u4e00\u822c)", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("MainWindow", u"\u30c4\u30fc\u30eb (\u8a73\u7d30)", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"\u30ef\u30fc\u30eb\u30c9\u7ba1\u7406", None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("MainWindow", u"\u30b5\u30fc\u30d0\u30fc\u7ba1\u7406", None))
     # retranslateUi
 
