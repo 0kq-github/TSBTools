@@ -142,7 +142,7 @@
       <property name="geometry">
        <rect>
         <x>490</x>
-        <y>290</y>
+        <y>270</y>
         <width>251</width>
         <height>20</height>
        </rect>
@@ -151,11 +151,11 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QToolButton" name="toolButton">
+     <widget class="QPushButton" name="pushButton_4">
       <property name="geometry">
        <rect>
         <x>750</x>
-        <y>290</y>
+        <y>270</y>
         <width>31</width>
         <height>21</height>
        </rect>
@@ -168,7 +168,7 @@
       <property name="geometry">
        <rect>
         <x>490</x>
-        <y>250</y>
+        <y>240</y>
         <width>141</width>
         <height>21</height>
        </rect>
@@ -181,7 +181,7 @@
       <property name="geometry">
        <rect>
         <x>640</x>
-        <y>250</y>
+        <y>240</y>
         <width>141</width>
         <height>23</height>
        </rect>
@@ -201,6 +201,41 @@
       </property>
       <property name="text">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;h2 style=&quot; margin-top:16px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:x-large; font-weight:600;&quot;&gt;更新履歴&lt;/span&gt;&lt;/h2&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox">
+      <property name="geometry">
+       <rect>
+        <x>490</x>
+        <y>300</y>
+        <width>141</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>ランチャーに自動的に起動構成を追加します</string>
+      </property>
+      <property name="text">
+       <string>起動構成の作成</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="checkBox_2">
+      <property name="geometry">
+       <rect>
+        <x>640</x>
+        <y>300</y>
+        <width>141</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>ワールドデータをダウンロード済みの場合でも再度ダウンロードを行います</string>
+      </property>
+      <property name="whatsThis">
+       <string/>
+      </property>
+      <property name="text">
+       <string>データの再ダウンロード</string>
       </property>
      </widget>
     </widget>
@@ -228,7 +263,7 @@
       <property name="geometry">
        <rect>
         <x>490</x>
-        <y>190</y>
+        <y>210</y>
         <width>141</width>
         <height>41</height>
        </rect>
@@ -244,7 +279,7 @@
       <property name="geometry">
        <rect>
         <x>490</x>
-        <y>240</y>
+        <y>260</y>
         <width>141</width>
         <height>41</height>
        </rect>
@@ -260,7 +295,7 @@
       <property name="geometry">
        <rect>
         <x>640</x>
-        <y>140</y>
+        <y>160</y>
         <width>141</width>
         <height>41</height>
        </rect>
@@ -276,7 +311,7 @@
       <property name="geometry">
        <rect>
         <x>640</x>
-        <y>290</y>
+        <y>310</y>
         <width>141</width>
         <height>41</height>
        </rect>
@@ -292,7 +327,7 @@
       <property name="geometry">
        <rect>
         <x>490</x>
-        <y>290</y>
+        <y>310</y>
         <width>141</width>
         <height>41</height>
        </rect>
@@ -308,7 +343,7 @@
       <property name="geometry">
        <rect>
         <x>490</x>
-        <y>140</y>
+        <y>160</y>
         <width>141</width>
         <height>41</height>
        </rect>
@@ -324,7 +359,7 @@
       <property name="geometry">
        <rect>
         <x>640</x>
-        <y>240</y>
+        <y>260</y>
         <width>141</width>
         <height>41</height>
        </rect>
@@ -340,7 +375,7 @@
       <property name="geometry">
        <rect>
         <x>640</x>
-        <y>190</y>
+        <y>210</y>
         <width>141</width>
         <height>41</height>
        </rect>
@@ -354,8 +389,8 @@
        <rect>
         <x>20</x>
         <y>60</y>
-        <width>460</width>
-        <height>271</height>
+        <width>451</width>
+        <height>361</height>
        </rect>
       </property>
       <property name="wordWrap">
@@ -388,17 +423,17 @@
       <property name="geometry">
        <rect>
         <x>490</x>
-        <y>110</y>
+        <y>118</y>
         <width>251</width>
         <height>21</height>
        </rect>
       </property>
      </widget>
-     <widget class="QToolButton" name="toolButton_2">
+     <widget class="QPushButton" name="pushButton_2">
       <property name="geometry">
        <rect>
         <x>750</x>
-        <y>110</y>
+        <y>119</y>
         <width>31</width>
         <height>21</height>
        </rect>
@@ -413,11 +448,11 @@
         <x>490</x>
         <y>60</y>
         <width>141</width>
-        <height>41</height>
+        <height>21</height>
        </rect>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;savesフォルダ&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;又はサーバーのフォルダ&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;savesフォルダ&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
      <widget class="QPushButton" name="pushButton_11">
@@ -436,7 +471,7 @@
      <widget class="QPushButton" name="pushButton_12">
       <property name="geometry">
        <rect>
-        <x>390</x>
+        <x>380</x>
         <y>20</y>
         <width>91</width>
         <height>31</height>
@@ -444,6 +479,19 @@
       </property>
       <property name="text">
        <string>再読み込み</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_7">
+      <property name="geometry">
+       <rect>
+        <x>490</x>
+        <y>80</y>
+        <width>141</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;又はサーバーのフォルダ&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </widget>
@@ -463,7 +511,7 @@
      <x>0</x>
      <y>0</y>
      <width>803</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

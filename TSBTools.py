@@ -61,24 +61,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.label_2.setText(self.md.convert(title_md))
 
         self.pushButton.clicked.connect(self.detect_mc)
-        self.toolButton.clicked.connect(self.select_mc)
+        self.pushButton_4.clicked.connect(self.select_mc)
         self.pushButton_1.clicked.connect(self.install_client)
         self.pushButton_3.clicked.connect(self.create_server)
 
         self.saves_dir = os.environ["appdata"] + "\\.minecraft\\saves"
         self.lineEdit_2.setText(self.saves_dir)
         self.pushButton_11.clicked.connect(self.detect_saves)
-        self.toolButton_2.clicked.connect(self.select_saves)
+        self.pushButton_2.clicked.connect(self.select_saves)
         self.load_levels()
         self.pushButton_12.clicked.connect(self.reload_levels)
         self.treeWidget.currentItemChanged.connect(self.detect_selection)
 
+        self.pushButton_datapack_extract.clicked.connect(self.extract_datapack)
+        self.pushButton_datapack_delete.clicked.connect(self.delete_datapack)
+        #self.pushButton_level_extractall.clicked.connect()
 
 
 
-        
 
-        
+
     
     def show_tsb_releases(self,releases):
         r, tsb_md = releases
@@ -110,16 +112,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if not self.check_input():
             return
         if os.path.exists(install_path+f"\\TheSkyBlessing_{self.comboBox.currentText()}"):
-            ret = QtWidgets.QMessageBox.information(self,title,"ワールドが既に存在します。上書きしますか？",QtWidgets.QMessageBox.Yes,QtWidgets.QMessageBox.No)
+            ret = QtWidgets.QMessageBox.information(self,title,"ワールドが既に存在します。上書きしますか？\n(現在のワールドは削除されます！)",QtWidgets.QMessageBox.Yes,QtWidgets.QMessageBox.No)
             if not (ret == QtWidgets.QMessageBox.Yes):
                 return
-        ret = QtWidgets.QMessageBox.information(self,title,"起動構成を作成しますか？",QtWidgets.QMessageBox.Yes,QtWidgets.QMessageBox.No)
+            shutil.rmtree(install_path+f"\\TheSkyBlessing_{self.comboBox.currentText()}")
         os.makedirs(install_path,exist_ok=True)
         self.install(install_path,self.comboBox.currentText())
-        if ret == QtWidgets.QMessageBox.Yes:
+        if self.checkBox.isChecked():
             self.create_profile()
         mcversion, levelname = self.get_world_info(install_path+f"\\TheSkyBlessing_{self.comboBox.currentText()}"+"\\level.dat")
         QtWidgets.QMessageBox.information(self,title,f"インストールが完了しました！\nTSB {self.comboBox.currentText()}\nMinecraft {mcversion}")
+        self.reload_levels()
 
     def install(self,path,ver,parent=None):
         download_url = tsb.releases[ver]["download_url"]
@@ -129,26 +132,27 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             prog = QtWidgets.QProgressDialog(self)
         prog.setWindowModality(Qt.ApplicationModal)
         prog.setWindowTitle("TSBTools")
-        prog.setLabelText("ダウンロード中:\n"+"TheSkyBlessing "+ver)
         prog.setFixedWidth(400)
         prog.setFixedHeight(100)
         prog.setValue(0)
         prog.setCancelButton(None)
         prog.setWindowFlags(Qt.Window)
         prog.setAutoClose(False)
-        file_size = tsb.releases[ver]["size"]
-        prog.setMaximum(file_size)
         prog.show()
-        res = requests.get(download_url,stream=True)
-        i = 0
-        os.makedirs(os.getcwd()+"\\TSBTools\\download",exist_ok=True)
         zip_path = os.getcwd()+f"\\TSBTools\\download\\{ver}.zip"
-        with open(zip_path,"wb") as f:
-            for chunk in res.iter_content(chunk_size=1024):
-                f.write(chunk)
-                i += len(chunk)
-                prog.setValue(i)
-        prog.setValue(0)
+        if (not os.path.exists(zip_path)) or (self.checkBox_2.isChecked()):
+            prog.setLabelText("ダウンロード中:\n"+"TheSkyBlessing "+ver)
+            file_size = tsb.releases[ver]["size"]
+            prog.setMaximum(file_size)
+            res = requests.get(download_url,stream=True)
+            i = 0
+            os.makedirs(os.getcwd()+"\\TSBTools\\download",exist_ok=True)
+            with open(zip_path,"wb") as f:
+                for chunk in res.iter_content(chunk_size=1024):
+                    f.write(chunk)
+                    i += len(chunk)
+                    prog.setValue(i)
+            prog.setValue(0)
         i = 0
         with zipfile.ZipFile(zip_path) as zf:
             files = zf.namelist()
@@ -219,7 +223,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def create_server(self):
         self.server_ui = server_ui()
         self.server_ui.setWindowTitle("サーバーを作成")
-        self.server_ui.setWindowIcon(QtGui.QIcon(QtGui.QPixmap(os.getcwd()+"\\assets\\tsb_icon.png")))
+        icon = QtGui.QPixmap()
+        icon.loadFromData(QByteArray.fromBase64(bytes(icons.tsb,encoding="utf-8")))
+        self.server_ui.setWindowIcon(QtGui.QIcon(icon))
         if self.comboBox.currentText():
             self.server_ui.comboBox.addItems(self.releases)
             self.server_ui.comboBox.setCurrentText(self.comboBox.currentText())
@@ -322,21 +328,25 @@ pause"""
                     for dp in datapacks:
                         if dp.endswith(".zip"):
                             with zipfile.ZipFile(saves_dir+"\\"+d+"\\datapacks\\"+dp) as zf:
-                                zf.extract("pack.mcmeta",os.getcwd()+"\\TSBTools\\temp")
+                                try:
+                                    zf.extract("pack.mcmeta",os.getcwd()+"\\TSBTools\\temp")
+                                except:
+                                    continue
                                 with open(os.getcwd()+"\\TSBTools\\temp\\pack.mcmeta",mode="r",encoding="utf-8_sig") as f:
                                     mcmeta = json.load(f)
                                     dir_tree.addChild(QtWidgets.QTreeWidgetItem([dp,mcmeta["pack"]["description"]]))
                         if os.path.isdir(saves_dir+"\\"+d+"\\datapacks\\"+dp):
-                            with open(saves_dir+"\\"+d+"\\datapacks\\"+dp+"\\pack.mcmeta",mode="r",encoding="utf-8_sig") as f:
-                                mcmeta = json.load(f)
-                                dir_tree.addChild(QtWidgets.QTreeWidgetItem([dp,mcmeta["pack"]["description"]]))
+                            try:
+                                with open(saves_dir+"\\"+d+"\\datapacks\\"+dp+"\\pack.mcmeta",mode="r",encoding="utf-8_sig") as f:
+                                    mcmeta = json.load(f)
+                                    dir_tree.addChild(QtWidgets.QTreeWidgetItem([dp,mcmeta["pack"]["description"]]))
+                            except:
+                                continue
                 self.treeWidget.addTopLevelItem(dir_tree)
 
     def reload_levels(self):
         self.load_levels()
         self.detect_selection()
-
-
 
     def detect_selection(self):
         current = self.treeWidget.currentItem()
@@ -370,6 +380,53 @@ pause"""
         self.pushButton_datapack_delete.setEnabled(enable)
         self.pushButton_datapack_extract.setEnabled(enable)
 
+    def extract_datapack(self):
+        target = self.lineEdit_2.text()+"\\"+self.selected_level+"\\datapacks\\"+self.selected_datapack
+        if os.path.isdir(target):
+            QtWidgets.QMessageBox.information(self,"TSBTools","選択されているデータパックは圧縮されていません")
+            return
+        prog = QtWidgets.QProgressDialog(self)
+        prog.setWindowTitle("TSBTools")
+        prog.setFixedWidth(400)
+        prog.setFixedHeight(100)
+        prog.setValue(0)
+        prog.setCancelButton(None)
+        prog.setWindowFlags(Qt.Window)
+        prog.setAutoClose(False)
+        prog.show()
+        i = 0
+        with zipfile.ZipFile(target) as zf:
+            files = zf.namelist()
+            prog.setMaximum(len(files))
+            ext_path = target[:-4]
+            for p in files:
+                zf.extract(p,ext_path)
+                i += 1
+                prog.setValue(i)
+                prog.setLabelText("展開中:\n"+p)
+        os.remove(target)
+        prog.close()
+        QtWidgets.QMessageBox.information(self,"TSBTools","展開が完了しました！\n"+target)
+        for item in self.treeWidget.selectedItems():
+            if item.text(0) == self.selected_datapack:
+                with open(target[:-4]+"\\pack.mcmeta",mode="r",encoding="utf-8_sig") as f:
+                    mcmeta = json.load(f)
+                    item.parent().addChild(QtWidgets.QTreeWidgetItem([self.selected_datapack[:-4],mcmeta["pack"]["description"]]))
+                item.parent().removeChild(item)
+
+
+    def delete_datapack(self):
+        target = self.lineEdit_2.text()+"\\"+self.selected_level+"\\datapacks\\"+self.selected_datapack
+        ret = QtWidgets.QMessageBox.information(self,"TSBTools","本当に削除しますか？",QtWidgets.QMessageBox.Yes,QtWidgets.QMessageBox.No)
+        if not (ret == QtWidgets.QMessageBox.Yes):
+            return
+        if os.path.isdir(target):
+            shutil.rmtree(target)
+        else:
+            os.remove(target)
+        for item in self.treeWidget.selectedItems():
+            if item.text(0) == self.selected_datapack:
+                item.parent().removeChild(item)
 
 
 class server_ui(QtWidgets.QDialog,Ui_Dialog):
@@ -415,7 +472,7 @@ class load_tsb_releases(QThread):
             print(e)
         self.signal.emit(([v for v in tsb.releases.keys()],md.convert(tsb_md.replace("*","#### ・")),))
 
-class load_saves(QThread):
+class load_levels(QThread):
     signal = Signal(list)
     
 

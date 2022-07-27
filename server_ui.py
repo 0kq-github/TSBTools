@@ -3,28 +3,28 @@
 ################################################################################
 ## Form generated from reading UI file 'server.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.3.1
+## Created by: Qt User Interface Compiler version 6.1.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDialog,
-    QLabel, QLineEdit, QPushButton, QSizePolicy,
-    QSlider, QSpinBox, QTextEdit, QToolButton,
-    QWidget)
+from PySide6.QtCore import *  # type: ignore
+from PySide6.QtGui import *  # type: ignore
+from PySide6.QtWidgets import *  # type: ignore
+
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(500, 277)
+        Dialog.resize(500, 290)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(Dialog.sizePolicy().hasHeightForWidth())
+        Dialog.setSizePolicy(sizePolicy)
+        Dialog.setMinimumSize(QSize(500, 290))
+        Dialog.setMaximumSize(QSize(500, 290))
         self.label = QLabel(Dialog)
         self.label.setObjectName(u"label")
         self.label.setGeometry(QRect(20, 20, 111, 21))
@@ -64,36 +64,36 @@ class Ui_Dialog(object):
         self.horizontalSlider.setOrientation(Qt.Horizontal)
         self.checkBox = QCheckBox(Dialog)
         self.checkBox.setObjectName(u"checkBox")
-        self.checkBox.setGeometry(QRect(140, 230, 111, 21))
+        self.checkBox.setGeometry(QRect(140, 240, 111, 21))
         self.checkBox.setChecked(False)
         self.checkBox.setAutoRepeat(False)
         self.pushButton = QPushButton(Dialog)
         self.pushButton.setObjectName(u"pushButton")
-        self.pushButton.setGeometry(QRect(380, 230, 101, 31))
+        self.pushButton.setGeometry(QRect(380, 240, 101, 31))
         self.label_3 = QLabel(Dialog)
         self.label_3.setObjectName(u"label_3")
-        self.label_3.setGeometry(QRect(19, 132, 111, 21))
+        self.label_3.setGeometry(QRect(19, 142, 111, 21))
         self.horizontalSlider_2 = QSlider(Dialog)
         self.horizontalSlider_2.setObjectName(u"horizontalSlider_2")
-        self.horizontalSlider_2.setGeometry(QRect(140, 130, 231, 22))
+        self.horizontalSlider_2.setGeometry(QRect(140, 140, 231, 22))
         self.horizontalSlider_2.setMaximum(100)
         self.horizontalSlider_2.setValue(20)
         self.horizontalSlider_2.setOrientation(Qt.Horizontal)
         self.spinBox_3 = QSpinBox(Dialog)
         self.spinBox_3.setObjectName(u"spinBox_3")
-        self.spinBox_3.setGeometry(QRect(380, 130, 101, 21))
+        self.spinBox_3.setGeometry(QRect(380, 140, 101, 21))
         self.spinBox_3.setMaximum(100)
         self.spinBox_3.setValue(20)
         self.label_6 = QLabel(Dialog)
         self.label_6.setObjectName(u"label_6")
-        self.label_6.setGeometry(QRect(20, 230, 111, 21))
+        self.label_6.setGeometry(QRect(20, 240, 111, 21))
         self.label_6.setOpenExternalLinks(True)
         self.label_7 = QLabel(Dialog)
         self.label_7.setObjectName(u"label_7")
-        self.label_7.setGeometry(QRect(20, 170, 111, 21))
+        self.label_7.setGeometry(QRect(20, 180, 111, 21))
         self.textEdit = QTextEdit(Dialog)
         self.textEdit.setObjectName(u"textEdit")
-        self.textEdit.setGeometry(QRect(140, 170, 341, 41))
+        self.textEdit.setGeometry(QRect(140, 180, 341, 41))
         self.textEdit.setAcceptRichText(False)
 
         self.retranslateUi(Dialog)
@@ -114,10 +114,9 @@ class Ui_Dialog(object):
         self.label_6.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p align=\"center\"><a href=\"https://www.minecraft.net/ja-jp/eula\"><span style=\"text-decoration:none; color:#6bb4f7\">Minecraft EULA</span></a></p></body></html>", None))
         self.label_7.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p align=\"center\">MOTD</p></body></html>", None))
         self.textEdit.setHtml(QCoreApplication.translate("Dialog", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
-"hr { height: 1px; border-width: 0; }\n"
-"</style></head><body style=\" font-family:'Yu Gothic UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'MS UI Gothic';\">\\u00A7eThe\\u00A7a Sky\\u00A7d Blessing \\u00a76 %s \\u00A7f- \\u00A7b%s</span></p></body></html>", None))
+"</style></head><body style=\" font-family:'MS UI Gothic'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">\\u00A7eThe\\u00A7a Sky\\u00A7d Blessing \\u00a76 %s \\u00A7f- \\u00A7b%s</p></body></html>", None))
     # retranslateUi
 
