@@ -18,6 +18,9 @@ import datetime
 import base64
 import shutil
 import re
+from threading import Thread
+from pypresence import Presence
+import time
 
 tsb = tsbAPI()
 version = "0.1.1"
@@ -163,11 +166,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 i += 1
                 prog.setValue(i)
                 prog.setLabelText("展開中:\n"+p)
-        if not os.path.exists(path+f"\\TheSkyBlessing_{ver}\\level.dat"):
-            file_list = os.listdir(os.listdir(path+f"\\TheSkyBlessing_{ver}\\TheSkyBlessing"))
+        if not os.path.exists(f"{path}\\TheSkyBlessing_{ver}\\level.dat"):
+            file_list = os.listdir(os.listdir(f"{path}\\TheSkyBlessing_{ver}\\TheSkyBlessing"))
             for file in file_list:
-                shutil.move(file,f"\\TheSkyBlessing_{ver}")
-            os.rmdir(f"\\TheSkyBlessing_{ver}\\TheSKyBlessing")
+                shutil.move(file,f"{path}\\TheSkyBlessing_{ver}")
+            os.rmdir(f"{path}\\TheSkyBlessing_{ver}\\TheSKyBlessing")
+        with open(f"{path}\\TheSkyBlessing_{ver}\\version.txt",mode="w",encoding="utf-8") as f:
+            f.write(ver)
         prog.close()
 
     def get_world_info(self,nbt_path):
@@ -386,10 +391,12 @@ pause"""
             QtWidgets.QMessageBox.information(self,"TSBTools","選択されているデータパックは圧縮されていません")
             return
         prog = QtWidgets.QProgressDialog(self)
+        prog.setWindowModality(Qt.ApplicationModal)
         prog.setWindowTitle("TSBTools")
         prog.setFixedWidth(400)
         prog.setFixedHeight(100)
         prog.setValue(0)
+        prog.setMinimum(0)
         prog.setCancelButton(None)
         prog.setWindowFlags(Qt.Window)
         prog.setAutoClose(False)
@@ -488,7 +495,27 @@ class load_mc_versions(QThread):
             pass
 
 
+def discordRPC(RPC:Presence):
+    start_time = time.time()
+    while True:
+        elapsed_time = int(time.time() - start_time)
+        elapsed_time_text = str((elapsed_time % 3600) // 60).zfill(2) + ":"+str(elapsed_time % 3600 % 60).zfill(2)
+        if (elapsed_time // 3600) != 0:
+            elapsed_time_text = str(elapsed_time // 3600).zfill(2) + ":" + elapsed_time_text 
+        RPC.update(
+            state=f"{elapsed_time_text} 経過",
+            large_image="tsb_icon",
+            large_text="v"+version
+            )
+        time.sleep(1)
+
 if __name__ == "__main__":
+    client_id = "1002237997997096960"
+    RPC = Presence(client_id)
+    RPC.connect()
+    th = Thread(target=discordRPC,args=(RPC,))
+    th.setDaemon(True)
+    th.start()
     QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     app = QtWidgets.QApplication()
 
