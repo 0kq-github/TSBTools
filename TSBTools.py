@@ -1,5 +1,5 @@
 from PySide6 import QtWidgets,QtGui
-from PySide6.QtCore import QThread,Signal,Qt,QByteArray
+from PySide6.QtCore import QThread,Signal,Qt,QByteArray,QObject,Signal
 from PySide6.QtGui import QPalette, QColor
 from main_ui import Ui_MainWindow
 from server_ui import Ui_Dialog
@@ -21,9 +21,65 @@ import re
 from threading import Thread
 from pypresence import Presence
 import time
+import sys
+import logging
+import traceback
 
 tsb = tsbAPI()
 version = "0.1.1"
+
+
+log = logging.getLogger(__name__)
+handler = logging.StreamHandler(stream=sys.stdout)
+log.addHandler(handler)
+
+def show_exception_box(log_msg):
+    """Checks if a QApplication instance is available and shows a messagebox with the exception message. 
+    If unavailable (non-console application), log an additional notice.
+    """
+    if QtWidgets.QApplication.instance() is not None:
+            errorbox = QtWidgets.QMessageBox()
+            #icon = QtGui.QPixmap()
+            #icon.loadFromData(QtGui.QIcon(QByteArray.fromBase64(bytes(icons.tsb,encoding="utf-8"))))
+            #errorbox.setWindowIcon(icon)
+            
+            errorbox.critical(None,"TSBTools",log_msg)
+            #errorbox.setText("例外が発生しました:\n{0}".format(log_msg))
+            #errorbox.setWindowTitle("TSBTools")
+            #errorbox.exec()
+    else:
+        log.debug("No QApplication instance available.")
+ 
+class UncaughtHook(QObject):
+    _exception_caught = Signal(object)
+ 
+    def __init__(self, *args, **kwargs):
+        super(UncaughtHook, self).__init__(*args, **kwargs)
+
+        # this registers the exception_hook() function as hook with the Python interpreter
+        sys.excepthook = self.exception_hook
+
+        # connect signal to execute the message box function always on main thread
+        self._exception_caught.connect(show_exception_box)
+ 
+    def exception_hook(self, exc_type, exc_value, exc_traceback):
+        """Function handling uncaught exceptions.
+        It is triggered each time an uncaught exception occurs. 
+        """
+        if issubclass(exc_type, KeyboardInterrupt):
+            # ignore keyboard interrupt to support console applications
+            sys.__excepthook__(exc_type, exc_value, exc_traceback)
+        else:
+            #exc_info = (exc_type, exc_value, exc_traceback)
+            log_msg = f"例外が発生しました: \n{exc_value}"
+            #'\n'.join([''.join(traceback.format_tb(exc_traceback)),'{0}: {1}'.format(exc_type.__name__, exc_value)])
+            #log.critical("Uncaught exception:\n {0}".format(log_msg), exc_info=exc_info)
+
+            # trigger message box show
+            self._exception_caught.emit(log_msg)
+
+
+
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         self.md = markdown.Markdown()
@@ -79,6 +135,34 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pushButton_datapack_extract.clicked.connect(self.extract_datapack)
         self.pushButton_datapack_delete.clicked.connect(self.delete_datapack)
         #self.pushButton_level_extractall.clicked.connect()
+        self.pushButton_datapack_add.clicked.connect(self.add_datapack)
+
+    def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
+        if event.isAutoRepeat():
+            return
+        key = QtGui.QKeySequence(event.key()).toString(QtGui.QKeySequence.NativeText)
+        self.lastPressedKey = key
+        #return super().keyPressEvent(event)
+    
+    def keyReleaseEvent(self, event: QtGui.QKeyEvent) -> None:
+        if event.isAutoRepeat():
+            return
+        key = QtGui.QKeySequence(event.key()).toString(QtGui.QKeySequence.NativeText)
+        self.lastReleasedKey = key
+
+        """
+        if (key == "Del") and self.treeWidget.currentItem():
+            try:
+                path = self.lineEdit_2.text() + "\\datapacks\\" + self.treeWidget.currentItem().text(0)
+                if os.path.isfile(path):
+                    os.remove(path)
+                else:
+                    shutil.rmtree(path)
+            except:
+                shutil.rmtree(self.lineEdit_2.text() + "\\" + self.treeWidget.currentItem().text(0))
+            self.reload_levels()
+        """
+        #return super().keyReleaseEvent(event)
 
 
 
@@ -378,6 +462,8 @@ pause"""
         self.pushButton_level_vscode.setEnabled(enable)
         self.pushButton_level_explorer.setEnabled(enable)
         self.pushButton_level_extractall.setEnabled(enable)
+        self.pushButton_level_add.setEnabled(enable)
+        self.pushButton_level_delete.setEnabled(enable)
         self.pushButton_datapack_update.setEnabled(enable)
         self.pushButton_datapack_add.setEnabled(enable)
 
@@ -434,6 +520,17 @@ pause"""
         for item in self.treeWidget.selectedItems():
             if item.text(0) == self.selected_datapack:
                 item.parent().removeChild(item)
+
+    def add_datapack(self):
+        datapacks_path = target = self.lineEdit_2.text()+"\\"+self.selected_level+"\\datapacks"
+        path,filter = QtWidgets.QFileDialog.getOpenFileName(self,"追加するデータパックを選ぶ",filter="圧縮ファイル (*.zip)")
+        if not path:
+            return
+        os.makedirs(datapacks_path,exist_ok=True)
+        shutil.copy(path,datapacks_path)
+        self.reload_levels()
+
+
 
 
 class server_ui(QtWidgets.QDialog,Ui_Dialog):
@@ -507,7 +604,7 @@ def discordRPC(RPC:Presence):
             large_image="tsb_icon",
             large_text="v"+version
             )
-        time.sleep(1)
+        time.sleep(0.1)
 
 if __name__ == "__main__":
     client_id = "1002237997997096960"
@@ -523,6 +620,7 @@ if __name__ == "__main__":
     app.setStyleSheet(qdarktheme.load_stylesheet())
 
     window = MainWindow()
+    qt_exception_hook = UncaughtHook()
     #window.setWindowFlags(Qt.FramelessWindowHint)
     window.show()
     app.exec()
