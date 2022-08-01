@@ -2,7 +2,8 @@ from PySide6 import QtWidgets,QtGui
 from PySide6.QtCore import QThread,Signal,Qt,QByteArray,QObject,Signal
 from PySide6.QtGui import QPalette, QColor
 from main_ui import Ui_MainWindow
-from server_ui import Ui_Dialog
+from server_ui import Ui_Dialog as server_dialog
+from tsbupdater_ui import Ui_Dialog as updater_dialog
 import qdarktheme
 from tsb.client import tsbAPI
 from tsb.client import mojangAPI
@@ -39,14 +40,7 @@ def show_exception_box(log_msg):
     """
     if QtWidgets.QApplication.instance() is not None:
             errorbox = QtWidgets.QMessageBox()
-            #icon = QtGui.QPixmap()
-            #icon.loadFromData(QtGui.QIcon(QByteArray.fromBase64(bytes(icons.tsb,encoding="utf-8"))))
-            #errorbox.setWindowIcon(icon)
-            
             errorbox.critical(None,"TSBTools",log_msg)
-            #errorbox.setText("例外が発生しました:\n{0}".format(log_msg))
-            #errorbox.setWindowTitle("TSBTools")
-            #errorbox.exec()
     else:
         log.debug("No QApplication instance available.")
  
@@ -136,6 +130,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pushButton_datapack_delete.clicked.connect(self.delete_datapack)
         #self.pushButton_level_extractall.clicked.connect()
         self.pushButton_datapack_add.clicked.connect(self.add_datapack)
+        self.pushButton_level_extractall.clicked.connect(self.extract_all_datapacks)
+        self.pushButton_datapack_update.clicked.connect(self.update_datapack)
+
+
 
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
         if event.isAutoRepeat():
@@ -458,7 +456,7 @@ pause"""
             self.set_datapack_buttons(False)
 
     def set_level_buttons(self,enable):
-        self.pushButton_level_update.setEnabled(enable)
+        self.pushButton_datapack_commit.setEnabled(enable)
         self.pushButton_level_vscode.setEnabled(enable)
         self.pushButton_level_explorer.setEnabled(enable)
         self.pushButton_level_extractall.setEnabled(enable)
@@ -522,7 +520,7 @@ pause"""
                 item.parent().removeChild(item)
 
     def add_datapack(self):
-        datapacks_path = target = self.lineEdit_2.text()+"\\"+self.selected_level+"\\datapacks"
+        datapacks_path = self.lineEdit_2.text()+"\\"+self.selected_level+"\\datapacks"
         path,filter = QtWidgets.QFileDialog.getOpenFileName(self,"追加するデータパックを選ぶ",filter="圧縮ファイル (*.zip)")
         if not path:
             return
@@ -530,10 +528,74 @@ pause"""
         shutil.copy(path,datapacks_path)
         self.reload_levels()
 
+    def extract_all_datapacks(self):
+        datapacks_path = self.lineEdit_2.text()+"\\"+self.selected_level+"\\datapacks"
+        parent = self.treeWidget.selectedItems()[0].parent()
+        datapacks = []
+        if not parent:
+            parent = self.treeWidget.selectedItems()[0]
+        for c in range(parent.childCount()):
+            datapacks.append(parent.child(c).text(0))
+        prog = QtWidgets.QProgressDialog(self)
+        prog.setWindowModality(Qt.ApplicationModal)
+        prog.setWindowTitle("TSBTools")
+        prog.setFixedWidth(400)
+        prog.setFixedHeight(100)
+        prog.setValue(0)
+        prog.setMinimum(0)
+        prog.setCancelButton(None)
+        prog.setWindowFlags(Qt.Window)
+        prog.setAutoClose(False)
+        prog.show()
+        for d in datapacks:
+            i = 0
+            target = datapacks_path + "\\" + d
+            with zipfile.ZipFile(target) as zf:
+                files = zf.namelist()
+                prog.setMaximum(len(files))
+                ext_path = target[:-4]
+                for p in files:
+                    zf.extract(p,ext_path)
+                    i += 1
+                    prog.setValue(i)
+                    prog.setLabelText("展開中:"+ d +"\n"+p)
+            os.remove(target)
+        prog.close()
+        QtWidgets.QMessageBox.information(self,"TSBTools","展開が完了しました！\n"+"\n".join(datapacks))
+        self.reload_levels()
+
+    def update_datapack(self):
+        level_path = self.lineEdit_2.text()+"\\"+self.selected_level
+        if os.path.exists(level_path+"\\version.txt"):
+            with open(level_path+"\\version.txt",mode="r",encoding="utf-8") as f:
+                ver = f.read()
+        else:
+            ver = "不明"
+        datapack_list = []
+        for k,v in tsb.releases.items():
+            if v["datapack"]:
+                datapack_list.append(k)
+        self.updater_ui = updater_ui()
+        icon = QtGui.QPixmap()
+        icon.loadFromData(QByteArray.fromBase64(bytes(icons.tsb,encoding="utf-8")))
+        self.updater_ui.setWindowIcon(QtGui.QIcon(icon))
+        self.updater_ui.setWindowTitle("TSBTools")
+        mc_version,name = self.get_world_info(level_path+"\\level.dat")
+        label_text = f"""<p align=\"center\">インストール済みのTSBのバージョン: {ver}</p>
+<p align=\"center\">Minecraftのバージョン: {mc_version}</p>
+"""
+        self.updater_ui.label.setText(label_text)
+        for v in datapack_list:
+            self.updater_ui.listWidget.addItem("✅ "+v)
+        self.updater_ui.exec()
+        
+
+        
 
 
 
-class server_ui(QtWidgets.QDialog,Ui_Dialog):
+
+class server_ui(QtWidgets.QDialog,server_dialog):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -559,6 +621,12 @@ class server_ui(QtWidgets.QDialog,Ui_Dialog):
         self.horizontalSlider_2.setValue(value)
     
     
+
+class updater_ui(QtWidgets.QDialog, updater_dialog):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
 
 
 class load_tsb_releases(QThread):

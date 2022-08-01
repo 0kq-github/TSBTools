@@ -272,7 +272,7 @@
        <string>データパックをアップデート</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_level_update">
+     <widget class="QPushButton" name="pushButton_datapack_commit">
       <property name="enabled">
        <bool>false</bool>
       </property>
@@ -491,7 +491,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;又はサーバーのフォルダ&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;またはサーバーのフォルダ&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
      <widget class="QPushButton" name="pushButton_level_add">
