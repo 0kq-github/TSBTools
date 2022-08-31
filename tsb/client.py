@@ -19,10 +19,10 @@ class tsbAPI:
     for r in resp.json():
       datapack = None
       for i in r["assets"]:
-        if i["browser_download_url"].split("/")[-1] == "TheSkyBlessing.zip":
+        if i["name"] == "TheSkyBlessing.zip":
           download_url = i["browser_download_url"]
           size = i["size"]
-        if i["browser_download_url"].split("/")[-1] == "datapacks.zip":
+        if i["name"] == "datapacks.zip":
           datapack = i["browser_download_url"]
           datapack_size = i["size"]
       self.releases[r["tag_name"]] = {

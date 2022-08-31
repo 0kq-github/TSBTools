@@ -1,5 +1,8 @@
 .qt_for_python/
-download
+TSBTools/
+TSBTools.build/
+TSBTools.dist/
+TSBTools.onefile-build/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

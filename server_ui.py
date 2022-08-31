@@ -3,21 +3,28 @@
 ################################################################################
 ## Form generated from reading UI file 'server.ui'
 ##
-## Created by: Qt User Interface Compiler version 5.15.2
+## Created by: Qt User Interface Compiler version 6.1.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide2.QtCore import *
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
+from PySide6.QtCore import *  # type: ignore
+from PySide6.QtGui import *  # type: ignore
+from PySide6.QtWidgets import *  # type: ignore
 
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(500, 277)
+        Dialog.resize(500, 290)
+        sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(Dialog.sizePolicy().hasHeightForWidth())
+        Dialog.setSizePolicy(sizePolicy)
+        Dialog.setMinimumSize(QSize(500, 290))
+        Dialog.setMaximumSize(QSize(500, 290))
         self.label = QLabel(Dialog)
         self.label.setObjectName(u"label")
         self.label.setGeometry(QRect(20, 20, 111, 21))
@@ -57,36 +64,36 @@ class Ui_Dialog(object):
         self.horizontalSlider.setOrientation(Qt.Horizontal)
         self.checkBox = QCheckBox(Dialog)
         self.checkBox.setObjectName(u"checkBox")
-        self.checkBox.setGeometry(QRect(140, 230, 111, 21))
+        self.checkBox.setGeometry(QRect(140, 240, 111, 21))
         self.checkBox.setChecked(False)
         self.checkBox.setAutoRepeat(False)
         self.pushButton = QPushButton(Dialog)
         self.pushButton.setObjectName(u"pushButton")
-        self.pushButton.setGeometry(QRect(380, 230, 101, 31))
+        self.pushButton.setGeometry(QRect(380, 240, 101, 31))
         self.label_3 = QLabel(Dialog)
         self.label_3.setObjectName(u"label_3")
-        self.label_3.setGeometry(QRect(19, 132, 111, 21))
+        self.label_3.setGeometry(QRect(19, 142, 111, 21))
         self.horizontalSlider_2 = QSlider(Dialog)
         self.horizontalSlider_2.setObjectName(u"horizontalSlider_2")
-        self.horizontalSlider_2.setGeometry(QRect(140, 130, 231, 22))
+        self.horizontalSlider_2.setGeometry(QRect(140, 140, 231, 22))
         self.horizontalSlider_2.setMaximum(100)
         self.horizontalSlider_2.setValue(20)
         self.horizontalSlider_2.setOrientation(Qt.Horizontal)
         self.spinBox_3 = QSpinBox(Dialog)
         self.spinBox_3.setObjectName(u"spinBox_3")
-        self.spinBox_3.setGeometry(QRect(380, 130, 101, 21))
+        self.spinBox_3.setGeometry(QRect(380, 140, 101, 21))
         self.spinBox_3.setMaximum(100)
         self.spinBox_3.setValue(20)
         self.label_6 = QLabel(Dialog)
         self.label_6.setObjectName(u"label_6")
-        self.label_6.setGeometry(QRect(20, 230, 111, 21))
+        self.label_6.setGeometry(QRect(20, 240, 111, 21))
         self.label_6.setOpenExternalLinks(True)
         self.label_7 = QLabel(Dialog)
         self.label_7.setObjectName(u"label_7")
-        self.label_7.setGeometry(QRect(20, 170, 111, 21))
+        self.label_7.setGeometry(QRect(20, 180, 111, 21))
         self.textEdit = QTextEdit(Dialog)
         self.textEdit.setObjectName(u"textEdit")
-        self.textEdit.setGeometry(QRect(140, 170, 341, 41))
+        self.textEdit.setGeometry(QRect(140, 180, 341, 41))
         self.textEdit.setAcceptRichText(False)
 
         self.retranslateUi(Dialog)
@@ -104,7 +111,7 @@ class Ui_Dialog(object):
         self.checkBox.setText(QCoreApplication.translate("Dialog", u"EULA\u306b\u540c\u610f\u3059\u308b", None))
         self.pushButton.setText(QCoreApplication.translate("Dialog", u"\u4f5c\u6210", None))
         self.label_3.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p align=\"center\">\u30d7\u30ec\u30a4\u30e4\u30fc\u6570\u4e0a\u9650</p></body></html>", None))
-        self.label_6.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p align=\"center\"><a href=\"https://www.minecraft.net/ja-jp/eula\"><span style=\" text-decoration: underline; color:#0000ff;\">Minecraft EULA</span></a></p></body></html>", None))
+        self.label_6.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p align=\"center\"><a href=\"https://www.minecraft.net/ja-jp/eula\"><span style=\"text-decoration:none; color:#6bb4f7\">Minecraft EULA</span></a></p></body></html>", None))
         self.label_7.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p align=\"center\">MOTD</p></body></html>", None))
         self.textEdit.setHtml(QCoreApplication.translate("Dialog", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
