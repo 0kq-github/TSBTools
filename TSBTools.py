@@ -182,6 +182,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         path = QtWidgets.QFileDialog.getExistingDirectory(self,"savesを開く",self.lineEdit_2.text())
         if path:
             self.lineEdit_2.setText(path)
+            self.saves_dir = path
+            self.reload_levels()
     
     def detect_mc(self):
         path = os.environ["appdata"] + "\\.minecraft"
@@ -746,11 +748,14 @@ def discordRPC(RPC:Presence):
 
 if __name__ == "__main__":
     client_id = "1002237997997096960"
-    RPC = Presence(client_id)
-    RPC.connect()
-    th = Thread(target=discordRPC,args=(RPC,))
-    th.setDaemon(True)
-    th.start()
+    try:
+        RPC = Presence(client_id)
+        RPC.connect()
+        th = Thread(target=discordRPC,args=(RPC,))
+        th.setDaemon(True)
+        th.start()
+    except:
+        pass
     QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     app = QtWidgets.QApplication()
 
