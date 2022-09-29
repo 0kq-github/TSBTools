@@ -91,7 +91,6 @@ for k,v in api.releases.items():
   print(v)
 """
 
-"""
-mj = mojangAPI()
-print("\n".join(k+" "+v for k,v in mj.fetch_release().items()))
-"""
+#mj = mojangAPI()
+#print("\n".join(k+" "+v for k,v in mj.fetch_release().items()))
+#print(mj.fetch_release().keys())

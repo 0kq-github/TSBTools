@@ -3,6 +3,8 @@ TSBTools/
 TSBTools.build/
 TSBTools.dist/
 TSBTools.onefile-build/
+download
+temp
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

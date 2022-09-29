@@ -24,10 +24,10 @@ from pypresence import Presence
 import time
 import sys
 import logging
-import traceback
+import datetime
 
 tsb = tsbAPI()
-version = "0.1.1"
+version = "0.1.4"
 
 
 log = logging.getLogger(__name__)
@@ -240,19 +240,24 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             prog.setValue(0)
         i = 0
         with zipfile.ZipFile(zip_path) as zf:
-            files = zf.namelist()
+            #for info in zf.infolist():
+            #    if os.sep != "/" and os.sep in info.filename:
+            #        info.filename = info.filename.replace(os.sep, "/")
+            files = zf.infolist()
             prog.setMaximum(len(files))
             ext_path = f"{path}\\TheSkyBlessing_{ver}"
             for p in files:
+                p.filename = p.orig_filename.encode('cp437').decode('cp932')
+                if os.sep != "/" and os.sep in p.filename:
+                    p.filename = p.filename.replace(os.sep, "/")
                 zf.extract(p,ext_path)
                 i += 1
                 prog.setValue(i)
-                prog.setLabelText("展開中:\n"+p)
+                prog.setLabelText("展開中:\n"+p.filename)
         if not os.path.exists(f"{path}\\TheSkyBlessing_{ver}\\level.dat"):
-            file_list = os.listdir(os.listdir(f"{path}\\TheSkyBlessing_{ver}\\TheSkyBlessing"))
-            for file in file_list:
-                shutil.move(file,f"{path}\\TheSkyBlessing_{ver}")
-            os.rmdir(f"{path}\\TheSkyBlessing_{ver}\\TheSKyBlessing")
+            shutil.copytree(f"{path}\\TheSkyBlessing_{ver}\\TheSkyBlessing",f"{path}\\TheSkyBlessing_{ver}",dirs_exist_ok=True)
+            shutil.rmtree(f"{path}\\TheSkyBlessing_{ver}\\TheSKyBlessing",ignore_errors=True)
+            #os.rmdir(f"{path}\\TheSkyBlessing_{ver}\\TheSKyBlessing")
         with open(f"{path}\\TheSkyBlessing_{ver}\\version.txt",mode="w",encoding="utf-8") as f:
             f.write(ver)
         prog.close()
@@ -273,9 +278,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 if n.name == "Version":
                     for nm in n.data:
                         if nm.name == "Name":
-                            result[0] = (nm.data)
+                            if nm.data[-1] == "X":
+                                for v in mojangAPI().fetch_release().keys():
+                                    if v.startswith(nm.data[:-2]):
+                                        result[0] = v
+                                        break
+                            else:
+                                result[0] = nm.data
                 if n.name == "LevelName":
-                    result[1] = (n.data)
+                    result[1] = n.data
         return result
 
     def check_input(self):
@@ -456,12 +467,12 @@ pause"""
             self.set_datapack_buttons(False)
 
     def set_level_buttons(self,enable):
-        self.pushButton_datapack_commit.setEnabled(enable)
-        self.pushButton_level_vscode.setEnabled(enable)
-        self.pushButton_level_explorer.setEnabled(enable)
+        #self.pushButton_datapack_commit.setEnabled(enable)
+        #self.pushButton_level_vscode.setEnabled(enable)
+        #self.pushButton_level_explorer.setEnabled(enable)
         self.pushButton_level_extractall.setEnabled(enable)
-        self.pushButton_level_add.setEnabled(enable)
-        self.pushButton_level_delete.setEnabled(enable)
+        #self.pushButton_level_add.setEnabled(enable)
+        #self.pushButton_level_delete.setEnabled(enable)
         self.pushButton_datapack_update.setEnabled(enable)
         self.pushButton_datapack_add.setEnabled(enable)
 
@@ -550,16 +561,19 @@ pause"""
         for d in datapacks:
             i = 0
             target = datapacks_path + "\\" + d
-            with zipfile.ZipFile(target) as zf:
-                files = zf.namelist()
-                prog.setMaximum(len(files))
-                ext_path = target[:-4]
-                for p in files:
-                    zf.extract(p,ext_path)
-                    i += 1
-                    prog.setValue(i)
-                    prog.setLabelText("展開中:"+ d +"\n"+p)
-            os.remove(target)
+            try:
+                with zipfile.ZipFile(target) as zf:
+                    files = zf.namelist()
+                    prog.setMaximum(len(files))
+                    ext_path = target[:-4]
+                    for p in files:
+                        zf.extract(p,ext_path)
+                        i += 1
+                        prog.setValue(i)
+                        prog.setLabelText("展開中:"+ d +"\n"+p)
+                os.remove(target)
+            except:
+                continue
         prog.close()
         QtWidgets.QMessageBox.information(self,"TSBTools","展開が完了しました！\n"+"\n".join(datapacks))
         self.reload_levels()
@@ -586,11 +600,67 @@ pause"""
 """
         self.updater_ui.label.setText(label_text)
         for v in datapack_list:
-            self.updater_ui.listWidget.addItem("✅ "+v)
+            if ver == "不明":
+                self.updater_ui.listWidget.addItem("❌ "+v)
+            elif ver.split(".")[1] == v.split(".")[1] and int(ver.split(".")[-1]) <= int(v.split(".")[-1]):
+                self.updater_ui.listWidget.addItem("✅ "+v)
+            else:
+                self.updater_ui.listWidget.addItem("❌ "+v)
+        self.updater_ui.pushButton.clicked.connect(self._update_datapack)
         self.updater_ui.exec()
         
-
-        
+    def _update_datapack(self):
+        if self.updater_ui.listWidget.selectedItems()[0].text().startswith("❌"):
+            ret = QtWidgets.QMessageBox.information(self.updater_ui,"TSBTools","互換性のないバージョンです。それでもアップデートを行いますか？",QtWidgets.QMessageBox.Yes,QtWidgets.QMessageBox.No)
+            if not (ret == QtWidgets.QMessageBox.Yes):
+                return
+        level_path = self.lineEdit_2.text()+"\\"+self.selected_level
+        if self.updater_ui.checkBox_2.isChecked():
+            shutil.copytree(level_path,level_path+"_backup_"+datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
+        ver = self.updater_ui.listWidget.selectedItems()[0].text().replace("❌ ","").replace("✅ ","")
+        download_url = tsb.get_release()[ver]["datapack"]
+        prog = QtWidgets.QProgressDialog(self.updater_ui)
+        prog.setWindowModality(Qt.ApplicationModal)
+        prog.setWindowTitle("TSBTools")
+        prog.setFixedWidth(400)
+        prog.setFixedHeight(100)
+        prog.setValue(0)
+        prog.setCancelButton(None)
+        prog.setWindowFlags(Qt.Window)
+        prog.setAutoClose(False)
+        prog.show()
+        prog.setLabelText("ダウンロード中:\n"+"TheSkyBlessing "+ver)
+        file_size = tsb.get_release()[ver]["datapack_size"]
+        prog.setMaximum(file_size)
+        res = requests.get(download_url,stream=True)
+        i = 0
+        os.makedirs(os.getcwd()+"\\TSBTools\\download",exist_ok=True)
+        zip_path = os.getcwd()+f"\\TSBTools\\download\\datapack_{ver}.zip"
+        with open(zip_path,"wb") as f:
+            for chunk in res.iter_content(chunk_size=1024):
+                f.write(chunk)
+                i += len(chunk)
+                prog.setValue(i)
+        i = 0
+        with zipfile.ZipFile(zip_path) as zf: 
+            files = zf.infolist()
+            prog.setMaximum(len(files))
+            shutil.rmtree(level_path+"\\datapacks")
+            os.makedirs(level_path+"\\datapacks",exist_ok=True)
+            ext_path = level_path + "\\datapacks"
+            for p in files:
+                p.filename = p.orig_filename.encode('cp437').decode('cp932')
+                if os.sep != "/" and os.sep in p.filename:
+                    p.filename = p.filename.replace(os.sep, "/")
+                zf.extract(p,ext_path)
+                i += 1
+                prog.setValue(i)
+                prog.setLabelText("展開中:\n"+p.filename)
+        prog.close()
+        with open(level_path+"\\version.txt",mode="w") as f:
+            f.write(ver)
+        QtWidgets.QMessageBox.information(self.updater_ui,"TSBTools","アップデートが完了しました！")
+        self.reload_levels()
 
 
 

@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'tsbupdater.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.3.1
+## Created by: Qt User Interface Compiler version 6.3.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -37,9 +37,6 @@ class Ui_Dialog(object):
         self.pushButton = QPushButton(Dialog)
         self.pushButton.setObjectName(u"pushButton")
         self.pushButton.setGeometry(QRect(270, 220, 191, 41))
-        self.checkBox = QCheckBox(Dialog)
-        self.checkBox.setObjectName(u"checkBox")
-        self.checkBox.setGeometry(QRect(270, 140, 191, 21))
         self.checkBox_2 = QCheckBox(Dialog)
         self.checkBox_2.setObjectName(u"checkBox_2")
         self.checkBox_2.setGeometry(QRect(270, 180, 181, 21))
@@ -59,8 +56,7 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
         self.label.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p align=\"center\">\u30a4\u30f3\u30b9\u30c8\u30fc\u30eb\u6e08\u307f\u306eTSB\u306e\u30d0\u30fc\u30b8\u30e7\u30f3: v0.0.0</p><p align=\"center\">Minecraft\u306e\u30d0\u30fc\u30b8\u30e7\u30f3: 0.00<br/></p></body></html>", None))
         self.pushButton.setText(QCoreApplication.translate("Dialog", u"\u30a2\u30c3\u30d7\u30c7\u30fc\u30c8", None))
-        self.checkBox.setText(QCoreApplication.translate("Dialog", u"\u4e92\u63db\u6027\u306e\u306a\u3044\u30d0\u30fc\u30b8\u30e7\u30f3\u3092\u8868\u793a\u3059\u308b", None))
         self.checkBox_2.setText(QCoreApplication.translate("Dialog", u"\u30d0\u30c3\u30af\u30a2\u30c3\u30d7\u3092\u4f5c\u6210\u3059\u308b", None))
-        self.label_2.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p>\u30d0\u30fc\u30b8\u30e7\u30f3\u4e00\u89a7</p></body></html>", None))
+        self.label_2.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p>\u4e92\u63db\u6027 / \u30d0\u30fc\u30b8\u30e7\u30f3\u4e00\u89a7</p></body></html>", None))
     # retranslateUi
 

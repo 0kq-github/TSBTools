@@ -57,19 +57,6 @@
     <string>アップデート</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="checkBox">
-   <property name="geometry">
-    <rect>
-     <x>270</x>
-     <y>140</y>
-     <width>191</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>互換性のないバージョンを表示する</string>
-   </property>
-  </widget>
   <widget class="QCheckBox" name="checkBox_2">
    <property name="geometry">
     <rect>
@@ -103,7 +90,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;バージョン一覧&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;互換性 / バージョン一覧&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
  </widget>

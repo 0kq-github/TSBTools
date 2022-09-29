@@ -3,15 +3,22 @@
 ################################################################################
 ## Form generated from reading UI file 'main.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.1.1
+## Created by: Qt User Interface Compiler version 6.3.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide6.QtCore import *  # type: ignore
-from PySide6.QtGui import *  # type: ignore
-from PySide6.QtWidgets import *  # type: ignore
-
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
+    QFont, QFontDatabase, QGradient, QIcon,
+    QImage, QKeySequence, QLinearGradient, QPainter,
+    QPalette, QPixmap, QRadialGradient, QTransform)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QHeaderView,
+    QLabel, QLineEdit, QMainWindow, QMenuBar,
+    QPushButton, QSizePolicy, QTabWidget, QTextBrowser,
+    QTreeWidget, QTreeWidgetItem, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -156,6 +163,9 @@ class Ui_MainWindow(object):
         self.tab = QWidget()
         self.tab.setObjectName(u"tab")
         self.tab.setEnabled(True)
+        self.label_8 = QLabel(self.tab)
+        self.label_8.setObjectName(u"label_8")
+        self.label_8.setGeometry(QRect(180, 120, 431, 191))
         self.tabWidget.addTab(self.tab, "")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
@@ -214,6 +224,7 @@ class Ui_MainWindow(object):
         self.pushButton_level_add.setText(QCoreApplication.translate("MainWindow", u"\u30ef\u30fc\u30eb\u30c9\u3092\u8ffd\u52a0", None))
         self.pushButton_level_delete.setText(QCoreApplication.translate("MainWindow", u"\u30ef\u30fc\u30eb\u30c9\u3092\u524a\u9664", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"\u30ef\u30fc\u30eb\u30c9\u7ba1\u7406", None))
+        self.label_8.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:18pt;\">\u672a\u5b9f\u88c5</span></p></body></html>", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("MainWindow", u"\u30b5\u30fc\u30d0\u30fc\u7ba1\u7406", None))
     # retranslateUi
 
