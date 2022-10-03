@@ -25,6 +25,8 @@ import time
 import sys
 import logging
 import datetime
+import subprocess
+import glob
 
 tsb = tsbAPI()
 version = "0.1.4"
@@ -92,6 +94,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.thread.signal.connect(self.show_tsb_releases)
         self.thread.start()
 
+        self.pushButton_level_add.setEnabled(True)
+
         title_md = f"""
 <h1 style=\"text-align: center;\">
     TSBTools v{version}
@@ -128,10 +132,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.pushButton_datapack_extract.clicked.connect(self.extract_datapack)
         self.pushButton_datapack_delete.clicked.connect(self.delete_datapack)
-        #self.pushButton_level_extractall.clicked.connect()
         self.pushButton_datapack_add.clicked.connect(self.add_datapack)
         self.pushButton_level_extractall.clicked.connect(self.extract_all_datapacks)
         self.pushButton_datapack_update.clicked.connect(self.update_datapack)
+
+        self.pushButton_level_explorer.clicked.connect(self.open_explorer)
+        self.pushButton_level_vscode.clicked.connect(self.open_vscode)
+
+        self.pushButton_level_add.clicked.connect(self.add_level)
+        self.pushButton_level_delete.clicked.connect(self.delete_level)
 
 
 
@@ -469,12 +478,12 @@ pause"""
             self.set_datapack_buttons(False)
 
     def set_level_buttons(self,enable):
-        #self.pushButton_datapack_commit.setEnabled(enable)
-        #self.pushButton_level_vscode.setEnabled(enable)
-        #self.pushButton_level_explorer.setEnabled(enable)
+        self.pushButton_datapack_commit.setEnabled(enable)
+        self.pushButton_level_explorer.setEnabled(enable)
         self.pushButton_level_extractall.setEnabled(enable)
         #self.pushButton_level_add.setEnabled(enable)
-        #self.pushButton_level_delete.setEnabled(enable)
+        self.pushButton_level_delete.setEnabled(enable)
+        self.pushButton_level_vscode.setEnabled(enable)
         self.pushButton_datapack_update.setEnabled(enable)
         self.pushButton_datapack_add.setEnabled(enable)
 
@@ -664,7 +673,37 @@ pause"""
         QtWidgets.QMessageBox.information(self.updater_ui,"TSBTools","アップデートが完了しました！")
         self.reload_levels()
 
+    def open_explorer(self):
+        result = subprocess.call(["explorer",self.lineEdit_2.text()+"\\"+self.selected_level],shell=True)
+    
+    def open_vscode(self):
+        os.makedirs(self.lineEdit_2.text()+"\\"+self.selected_level+"\\datapacks",exist_ok=True)
+        result = subprocess.call(["code","-g",self.lineEdit_2.text()+"\\"+self.selected_level+"\\datapacks"],shell=True)
+        if result == 1:
+            QtWidgets.QMessageBox.critical(self,"TSBTools","VSCodeの起動に失敗しました。\nVSCodeはインストールされていますか？")
 
+    def add_level(self):
+        path = QtWidgets.QFileDialog.getExistingDirectory(self,"追加するワールドを選ぶ")
+        try:
+            level_ver, level_name = self.get_world_info(path+"\\level.dat")
+            level_name = re.sub("§.","",level_name)
+        except:
+            QtWidgets.QMessageBox.warning(self,"TSBTools","level.datの読み込みに失敗しました。")
+            return
+        ret = QtWidgets.QMessageBox.information(self,"TSBTools","ワールドを追加しますか？\nワールド情報\nワールド名: "+level_name+"\nバージョン: "+level_ver,QtWidgets.QMessageBox.Yes,QtWidgets.QMessageBox.No)
+        if not (ret == QtWidgets.QMessageBox.Yes):
+            return
+        shutil.copytree(path, self.lineEdit_2.text()+"\\"+path.split("/")[-1])
+        QtWidgets.QMessageBox.information(self,"TSBTools","ワールドを追加しました。")
+        self.reload_levels()
+    
+    def delete_level(self):
+        ret = QtWidgets.QMessageBox.information(self,"TSBTools","ワールドを削除しますか？\nワールド情報\nワールド名: "+self.selected_level,QtWidgets.QMessageBox.Yes,QtWidgets.QMessageBox.No)
+        if not (ret == QtWidgets.QMessageBox.Yes):
+            return
+        shutil.rmtree(self.lineEdit_2.text()+"\\"+self.selected_level)
+        QtWidgets.QMessageBox.information(self,"TSBTools","ワールドを削除しました。")
+        self.reload_levels()
 
 
 class server_ui(QtWidgets.QDialog,server_dialog):

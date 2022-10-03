@@ -5,6 +5,7 @@ TSBTools.dist/
 TSBTools.onefile-build/
 download
 temp
+pyinstaller
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
