@@ -696,6 +696,7 @@ pause"""
         if os.path.exists(level_path+"\\datapacks\\.git"):
             Repo(level_path+"\\datapacks").remote().pull()
             QtWidgets.QMessageBox.information(self,"TSBTools","適用が完了しました。")
+            self.reload_levels()
             return
         ret = QtWidgets.QMessageBox.information(self,"TSBTools","datapacksが上書きされます。続行しますか？",QtWidgets.QMessageBox.Yes,QtWidgets.QMessageBox.No)
         if not (ret == QtWidgets.QMessageBox.Yes):
@@ -704,6 +705,7 @@ pause"""
         #os.makedirs(level_path+"\\datapacks",exist_ok=True)
         Repo().clone_from("https://github.com/ProjectTSB/TheSkyBlessing.git",level_path+"\\datapacks")
         QtWidgets.QMessageBox.information(self,"TSBTools","適用が完了しました。")
+        self.reload_levels()
 
     def add_level(self):
         path = QtWidgets.QFileDialog.getExistingDirectory(self,"追加するワールドを選ぶ")
