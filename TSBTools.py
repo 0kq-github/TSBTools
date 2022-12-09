@@ -26,10 +26,10 @@ import sys
 import logging
 import datetime
 import subprocess
-import glob
+from git import Repo
 
 tsb = tsbAPI()
-version = "0.1.4"
+version = "0.1.6"
 
 
 log = logging.getLogger(__name__)
@@ -135,6 +135,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pushButton_datapack_add.clicked.connect(self.add_datapack)
         self.pushButton_level_extractall.clicked.connect(self.extract_all_datapacks)
         self.pushButton_datapack_update.clicked.connect(self.update_datapack)
+        self.pushButton_datapack_commit.clicked.connect(self.commit_datapack)
 
         self.pushButton_level_explorer.clicked.connect(self.open_explorer)
         self.pushButton_level_vscode.clicked.connect(self.open_vscode)
@@ -690,6 +691,20 @@ pause"""
         if result == 1:
             QtWidgets.QMessageBox.critical(self,"TSBTools","VSCodeの起動に失敗しました。\nVSCodeはインストールされていますか？")
 
+    def commit_datapack(self):
+        level_path = self.lineEdit_2.text()+"\\"+self.selected_level
+        if os.path.exists(level_path+"\\datapacks\\.git"):
+            Repo(level_path+"\\datapacks").remote().pull()
+            QtWidgets.QMessageBox.information(self,"TSBTools","適用が完了しました。")
+            return
+        ret = QtWidgets.QMessageBox.information(self,"TSBTools","datapacksが上書きされます。続行しますか？",QtWidgets.QMessageBox.Yes,QtWidgets.QMessageBox.No)
+        if not (ret == QtWidgets.QMessageBox.Yes):
+            return
+        shutil.rmtree(level_path+"\\datapacks",ignore_errors=True)
+        #os.makedirs(level_path+"\\datapacks",exist_ok=True)
+        Repo().clone_from("https://github.com/ProjectTSB/TheSkyBlessing.git",level_path+"\\datapacks")
+        QtWidgets.QMessageBox.information(self,"TSBTools","適用が完了しました。")
+
     def add_level(self):
         path = QtWidgets.QFileDialog.getExistingDirectory(self,"追加するワールドを選ぶ")
         try:
@@ -810,7 +825,7 @@ if __name__ == "__main__":
     app.setStyleSheet(qdarktheme.load_stylesheet())
 
     window = MainWindow()
-    #qt_exception_hook = UncaughtHook()
+    qt_exception_hook = UncaughtHook()
     #window.setWindowFlags(Qt.FramelessWindowHint)
     window.show()
     app.exec()
