@@ -1,0 +1,2 @@
+pyside6-uic.exe main.ui -o main_ui.py & pyside6-uic.exe server.ui -o server_ui.py
+pyside6-uic.exe main.ui -o main_ui.py & pyside6-uic.exe server.ui -o server_ui.py & pyside6-uic.exe tsbupdater.ui -o tsbupdater_ui.py
