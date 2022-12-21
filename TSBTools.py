@@ -4,6 +4,7 @@ from PySide6.QtGui import QPalette, QColor
 from main_ui import Ui_MainWindow
 from server_ui import Ui_Dialog as server_dialog
 from tsbupdater_ui import Ui_Dialog as updater_dialog
+from datapack_manager import Ui_Dialog as datapack_dialog
 import qdarktheme
 from tsb.client import tsbAPI
 from tsb.client import mojangAPI
@@ -126,7 +127,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.lineEdit_2.setText(self.saves_dir)
         self.pushButton_11.clicked.connect(self.detect_saves)
         self.pushButton_2.clicked.connect(self.select_saves)
-        self.load_levels()
+        #self.load_levels()
         self.pushButton_12.clicked.connect(self.reload_levels)
         self.treeWidget.currentItemChanged.connect(self.detect_selection)
 
@@ -143,6 +144,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pushButton_level_add.clicked.connect(self.add_level)
         self.pushButton_level_delete.clicked.connect(self.delete_level)
 
+        self.tabWidget.currentChanged.connect(self.update_levels)
+
+    def update_levels(self,i):
+        if i == 1:
+            if self.treeWidget.topLevelItemCount() == 0:
+                self.load_levels()
 
 
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
@@ -228,7 +235,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             prog = QtWidgets.QProgressDialog(self)
         prog.setWindowModality(Qt.ApplicationModal)
-        prog.setWindowTitle("TSBTools")
+        prog.setWindowTitle(self.windowTitle())
         prog.setFixedWidth(400)
         prog.setFixedHeight(100)
         prog.setValue(0)
@@ -376,7 +383,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         download_url = mc_releases[mcversion]
         prog = QtWidgets.QProgressDialog(self.server_ui)
         prog.setWindowModality(Qt.ApplicationModal)
-        prog.setWindowTitle("TSBTools")
+        prog.setWindowTitle(self.windowTitle())
         prog.setLabelText("ダウンロード中:\n"+"server.jar")
         prog.setCancelButton(None)
         prog.setFixedWidth(400)
@@ -503,7 +510,7 @@ pause"""
             return
         prog = QtWidgets.QProgressDialog(self)
         prog.setWindowModality(Qt.ApplicationModal)
-        prog.setWindowTitle("TSBTools")
+        prog.setWindowTitle(self.windowTitle())
         prog.setFixedWidth(400)
         prog.setFixedHeight(100)
         prog.setValue(0)
@@ -546,7 +553,7 @@ pause"""
             if item.text(0) == self.selected_datapack:
                 item.parent().removeChild(item)
 
-    def add_datapack(self):
+    def _add_datapack(self):
         datapacks_path = self.lineEdit_2.text()+"\\"+self.selected_level+"\\datapacks"
         path,filter = QtWidgets.QFileDialog.getOpenFileName(self,"追加するデータパックを選ぶ",filter="圧縮ファイル (*.zip)")
         if not path:
@@ -554,6 +561,15 @@ pause"""
         os.makedirs(datapacks_path,exist_ok=True)
         shutil.copy(path,datapacks_path)
         self.reload_levels()
+
+    def add_datapack(self):
+        datapacks_path = self.lineEdit_2.text()+"\\"+self.selected_level+"\\datapacks"
+        self.datapack_ui = datapack_ui()
+        self.datapack_ui.setWindowIcon(self.windowIcon())
+        self.datapack_ui.setWindowTitle(self.windowTitle())
+        self.datapack_ui.fetch_repo()
+        self.datapack_ui.exec()
+
 
     def extract_all_datapacks(self):
         datapacks_path = self.lineEdit_2.text()+"\\"+self.selected_level+"\\datapacks"
@@ -565,7 +581,7 @@ pause"""
             datapacks.append(parent.child(c).text(0))
         prog = QtWidgets.QProgressDialog(self)
         prog.setWindowModality(Qt.ApplicationModal)
-        prog.setWindowTitle("TSBTools")
+        prog.setWindowTitle(self.windowTitle())
         prog.setFixedWidth(400)
         prog.setFixedHeight(100)
         prog.setValue(0)
@@ -606,10 +622,11 @@ pause"""
             if v["datapack"]:
                 datapack_list.append(k)
         self.updater_ui = updater_ui()
-        icon = QtGui.QPixmap()
-        icon.loadFromData(QByteArray.fromBase64(bytes(icons.tsb,encoding="utf-8")))
-        self.updater_ui.setWindowIcon(QtGui.QIcon(icon))
-        self.updater_ui.setWindowTitle("TSBTools")
+        #icon = QtGui.QPixmap()
+        #icon.loadFromData(QByteArray.fromBase64(bytes(icons.tsb,encoding="utf-8")))
+        #self.updater_ui.setWindowIcon(QtGui.QIcon(icon))
+        self.updater_ui.setWindowIcon(self.windowIcon())
+        self.updater_ui.setWindowTitle(self.windowTitle())
         mc_version,name = self.get_world_info(level_path+"\\level.dat")
         label_text = f"""<p align=\"center\">インストール済みのTSBのバージョン: {ver}</p>
 <p align=\"center\">Minecraftのバージョン: {mc_version}</p>
@@ -637,7 +654,7 @@ pause"""
         download_url = tsb.get_release()[ver]["datapack"]
         prog = QtWidgets.QProgressDialog(self.updater_ui)
         prog.setWindowModality(Qt.ApplicationModal)
-        prog.setWindowTitle("TSBTools")
+        prog.setWindowTitle(self.windowTitle())
         prog.setFixedWidth(400)
         prog.setFixedHeight(100)
         prog.setValue(0)
@@ -763,6 +780,61 @@ class updater_ui(QtWidgets.QDialog, updater_dialog):
         super().__init__()
         self.setupUi(self)
 
+class datapack_ui(QtWidgets.QDialog, datapack_dialog):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self.treeWidget.currentItemChanged.connect(self.show_info)
+    
+    def fetch_repo(self):
+        repo_url = "https://raw.githubusercontent.com/0kq-github/tsbtools-repo/main/repository.json"
+        r = requests.get(repo_url)
+        repos = r.json()
+        repo_list = []
+        info_dict = {}
+        for repo in repos:
+            try:
+                if repo["github_url"]:
+                    user_name,repo_name = repo["github_url"].split("/")[-2:]
+                    latest = requests.get(f"https://api.github.com/repos/{user_name}/{repo_name}/releases/latest")
+                    latest_json = latest.json()
+                    for asset in latest_json["assets"]:
+                        if asset["name"] == repo["filename"]:
+                            download_url = asset["browser_download_url"]
+                            version = latest_json["tag_name"]
+                            description_url = f"https://raw.githubusercontent.com/{user_name}/{repo_name}/{repo['github_branch']}/README.md"
+                    repo_data = {
+                            "name": repo_name,
+                            "description_url": description_url,
+                            "download_url": download_url,
+                            "version": version
+                            }
+                    repo_list.append(repo_data)
+                    info_dict[repo_name] = description_url
+                    repo_item =  QtWidgets.QTreeWidgetItem([repo_data["name"],repo_data["version"]])
+                    self.treeWidget.addTopLevelItem(repo_item)
+                else:
+                    repo_list.append(repo)
+                    info_dict[repo["name"]] = repo["description_url"]
+                    repo_item =  QtWidgets.QTreeWidgetItem([repo["name"],repo["version"]])
+                    self.treeWidget.addTopLevelItem(repo_item)
+            except Exception as e:
+                print(e)
+                continue
+        self.info_dict = info_dict
+        self.repo_list = repo_list
+    
+    def show_info(self):
+        current = self.treeWidget.currentItem()
+        if current:
+            self.selected_repo = current.text(0)
+            r = requests.get(self.info_dict[self.selected_repo])
+            md = markdown.Markdown()
+            description = md.convert(r.text)
+            self.textBrowser.setText(description)
+
+
+
 
 
 class load_tsb_releases(QThread):
@@ -780,9 +852,6 @@ class load_tsb_releases(QThread):
             print(e)
         self.signal.emit(([v for v in tsb.releases.keys()],md.convert(tsb_md.replace("*","#### ・")),))
 
-class load_levels(QThread):
-    signal = Signal(list)
-    
 
 class load_mc_versions(QThread):
     signal = Signal(dict)
