@@ -91,9 +91,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setWindowIcon(QtGui.QIcon(icon))
         self.textBrowser.setText(self.md.convert("###リリース一覧を読み込み中..."))
 
-        self.thread = load_tsb_releases(self)
-        self.thread.signal.connect(self.show_tsb_releases)
-        self.thread.start()
+        self.__thread_0 = load_tsb_releases()
+        self.__thread_0.signal.connect(self.show_tsb_releases)
+        self.__thread_0.start()
 
         self.pushButton_level_add.setEnabled(True)
 
@@ -424,7 +424,7 @@ pause"""
             f.write(start_bat)
         QtWidgets.QMessageBox.information(self.server_ui,"TSBTools",f"サーバーの作成が完了しました！\nサーバー起動ファイル:\n{install_path}\\start.bat")
 
-    def load_levels(self):
+    def _load_levels(self):
         saves_dir = self.saves_dir
         self.treeWidget.clear()
         if not os.path.exists(saves_dir):
@@ -464,6 +464,12 @@ pause"""
                             except:
                                 continue
                 self.treeWidget.addTopLevelItem(dir_tree)
+    
+    def load_levels(self):
+        self.treeWidget.clear()
+        self.__thread_1 = load_levels(self.saves_dir,self.treeWidget,self.get_world_info)
+        self.__thread_1.start()
+
 
     def reload_levels(self):
         self.load_levels()
@@ -841,6 +847,9 @@ class datapack_ui(QtWidgets.QDialog, datapack_dialog):
 class load_tsb_releases(QThread):
     signal = Signal(tuple)
 
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
     def run(self):
         md = markdown.Markdown()
         tsb_md = ""
@@ -857,6 +866,9 @@ class load_tsb_releases(QThread):
 class load_mc_versions(QThread):
     signal = Signal(dict)
 
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
     def run(self):
         mc = mojangAPI()
         try:
@@ -865,6 +877,56 @@ class load_mc_versions(QThread):
         except:
             pass
 
+class load_levels(QThread):
+    signal = Signal()
+
+    def __init__(self,saves_dir,treeWidget,get_world_info,parent=None):
+        super().__init__(parent)
+        self.saves_dir = saves_dir
+        self.treeWidget = treeWidget
+        self.get_world_info = get_world_info
+
+
+    def run(self):
+        saves_dir = self.saves_dir
+        self.treeWidget.clear()
+        if not os.path.exists(saves_dir):
+            return
+        for d in os.listdir(saves_dir):
+            if os.path.isdir(saves_dir+"\\"+d):
+                if not os.path.exists(saves_dir+"\\"+d+"\\level.dat"):
+                    continue
+                try:
+                    mcversion,levelname = self.get_world_info(saves_dir+"\\"+d+"\\level.dat")
+                except:
+                    continue
+                if levelname:
+                    levelname = re.sub("§.","",levelname)
+                else:
+                    levelname = d
+                if not mcversion:
+                    mcversion = "バージョン不明"
+                dir_tree = QtWidgets.QTreeWidgetItem([d,f"{levelname} ({mcversion})"])
+                if os.path.exists(saves_dir+"\\"+d+"\\datapacks"):
+                    datapacks = os.listdir(saves_dir+"\\"+d+"\\datapacks")
+                    for dp in datapacks:
+                        if dp.endswith(".zip"):
+                            with zipfile.ZipFile(saves_dir+"\\"+d+"\\datapacks\\"+dp) as zf:
+                                try:
+                                    zf.extract("pack.mcmeta",os.getcwd()+"\\TSBTools\\temp")
+                                except:
+                                    continue
+                                with open(os.getcwd()+"\\TSBTools\\temp\\pack.mcmeta",mode="r",encoding="utf-8_sig") as f:
+                                    mcmeta = json.load(f)
+                                    dir_tree.addChild(QtWidgets.QTreeWidgetItem([dp,mcmeta["pack"]["description"]]))
+                        if os.path.isdir(saves_dir+"\\"+d+"\\datapacks\\"+dp):
+                            try:
+                                with open(saves_dir+"\\"+d+"\\datapacks\\"+dp+"\\pack.mcmeta",mode="r",encoding="utf-8_sig") as f:
+                                    mcmeta = json.load(f)
+                                    dir_tree.addChild(QtWidgets.QTreeWidgetItem([dp,mcmeta["pack"]["description"]]))
+                            except:
+                                continue
+                self.treeWidget.addTopLevelItem(dir_tree)
 
 def discordRPC(RPC:Presence):
     start_time = time.time()
