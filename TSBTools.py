@@ -805,18 +805,19 @@ class datapack_ui(QtWidgets.QDialog, datapack_dialog):
                             description_url = f"https://raw.githubusercontent.com/{user_name}/{repo_name}/{repo['github_branch']}/README.md"
                     repo_data = {
                             "name": repo_name,
+                            "author": user_name,
                             "description_url": description_url,
                             "download_url": download_url,
                             "version": version
                             }
                     repo_list.append(repo_data)
                     info_dict[repo_name] = description_url
-                    repo_item =  QtWidgets.QTreeWidgetItem([repo_data["name"],repo_data["version"]])
+                    repo_item =  QtWidgets.QTreeWidgetItem([repo_data["name"],repo_data["author"],repo_data["version"]])
                     self.treeWidget.addTopLevelItem(repo_item)
                 else:
                     repo_list.append(repo)
                     info_dict[repo["name"]] = repo["description_url"]
-                    repo_item =  QtWidgets.QTreeWidgetItem([repo["name"],repo["version"]])
+                    repo_item =  QtWidgets.QTreeWidgetItem([repo["name"],repo["author"],repo["version"]])
                     self.treeWidget.addTopLevelItem(repo_item)
             except Exception as e:
                 print(e)
